@@ -18,6 +18,7 @@ import { getAuthStrings } from './voice/languageStrings';
 export interface AuthSession {
   role: 'Buyer' | 'Seller';
   identifier: string;
+  address?: string;
 }
 
 interface VoiceAuthGateProps {
@@ -26,7 +27,7 @@ interface VoiceAuthGateProps {
   isMuted: boolean;
 }
 
-type AuthStep = 'role_selection' | 'user_identifier' | 'handshake';
+type AuthStep = 'role_selection' | 'user_identifier' | 'user_address' | 'handshake';
 
 export const VoiceAuthGate: React.FC<VoiceAuthGateProps> = ({
   language,
@@ -43,11 +44,13 @@ export const VoiceAuthGate: React.FC<VoiceAuthGateProps> = ({
   // Auth state captured strictly via voice
   const [selectedRole, setSelectedRole] = useState<'Buyer' | 'Seller'>('Seller');
   const [userIdentifier, setUserIdentifier] = useState<string>('');
+  const [userAddress, setUserAddress] = useState<string>('');
 
   // Refs to isolate callbacks and avoid infinite re-render loops
   const currentStepRef = useRef<AuthStep>('role_selection');
   const roleRef = useRef<'Buyer' | 'Seller'>('Seller');
   const identifierRef = useRef<string>('');
+  const addressRef = useRef<string>('');
   const isDestroyedRef = useRef<boolean>(false);
   const recognitionRef = useRef<any>(null);
   const silenceTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -62,6 +65,14 @@ export const VoiceAuthGate: React.FC<VoiceAuthGateProps> = ({
   useEffect(() => {
     roleRef.current = selectedRole;
   }, [selectedRole]);
+
+  useEffect(() => {
+    identifierRef.current = userIdentifier;
+  }, [userIdentifier]);
+
+  useEffect(() => {
+    addressRef.current = userAddress;
+  }, [userAddress]);
 
   useEffect(() => {
     identifierRef.current = userIdentifier;
@@ -246,12 +257,37 @@ export const VoiceAuthGate: React.FC<VoiceAuthGateProps> = ({
       setUserIdentifier(finalName);
       identifierRef.current = finalName;
 
-      // Transition to Turn 3 (Verification & Handshake)
+      // Transition to Turn 3 (User Address)
+      setCurrentStep('user_address');
+      currentStepRef.current = 'user_address';
+
+      const promptText = authStrings.addressSpoken;
+      setSpokenPrompt(promptText);
+
+      if (!isMuted) {
+        SpeechService.stopSpeaking();
+        SpeechService.speak(
+          promptText,
+          language,
+          () => setAssistantState('speaking'),
+          () => startListeningTurn()
+        );
+      } else {
+        startListeningTurn();
+      }
+    } else if (step === 'user_address') {
+      // Validate and capture address/village/city
+      const cleanAddress = answer.replace(/^(my address is|i live in|mera pata|gaon|shehar)\s*/i, '').trim();
+      const finalAddress = cleanAddress || 'Gorakhpur, Uttar Pradesh';
+      setUserAddress(finalAddress);
+      addressRef.current = finalAddress;
+
+      // Transition to Turn 4 (Verification & Handshake)
       setCurrentStep('handshake');
       currentStepRef.current = 'handshake';
       setAssistantState('verified');
 
-      const confirmationPrompt = authStrings.confirmSpoken(finalName, roleRef.current);
+      const confirmationPrompt = authStrings.confirmSpoken(identifierRef.current, roleRef.current, finalAddress);
       setSpokenPrompt(confirmationPrompt);
 
       if (!isMuted) {
@@ -266,6 +302,7 @@ export const VoiceAuthGate: React.FC<VoiceAuthGateProps> = ({
               onAuthenticated({
                 role: roleRef.current,
                 identifier: identifierRef.current,
+                address: finalAddress,
               });
             }, 1200);
           }
@@ -275,6 +312,7 @@ export const VoiceAuthGate: React.FC<VoiceAuthGateProps> = ({
           onAuthenticated({
             role: roleRef.current,
             identifier: identifierRef.current,
+            address: finalAddress,
           });
         }, 1200);
       }
@@ -357,9 +395,9 @@ export const VoiceAuthGate: React.FC<VoiceAuthGateProps> = ({
           {authStrings.subtitle}
         </p>
 
-        {/* Step Progression (3 Turns) */}
-        <div className="flex items-center justify-center gap-2 sm:gap-3 mb-6 w-full max-w-sm">
-          <div className="flex-1 flex items-center gap-1.5">
+        {/* Step Progression (4 Turns) */}
+        <div className="flex items-center justify-center gap-1.5 sm:gap-2 mb-6 w-full max-w-md">
+          <div className="flex-1 flex items-center gap-1">
             <div
               className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-black transition-all ${
                 currentStep === 'role_selection'
@@ -369,25 +407,40 @@ export const VoiceAuthGate: React.FC<VoiceAuthGateProps> = ({
             >
               1
             </div>
-            <span className="text-[11px] font-bold text-[#1b4332]">{authStrings.stepRole}</span>
+            <span className="text-[10px] sm:text-[11px] font-bold text-[#1b4332] truncate">{authStrings.stepRole}</span>
           </div>
-          <div className="w-6 h-0.5 bg-emerald-200" />
-          <div className="flex-1 flex items-center gap-1.5">
+          <div className="w-3 sm:w-5 h-0.5 bg-emerald-200" />
+          <div className="flex-1 flex items-center gap-1">
             <div
               className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-black transition-all ${
                 currentStep === 'user_identifier'
                   ? 'bg-[#1b4332] text-white ring-4 ring-emerald-200'
-                  : currentStep === 'handshake'
+                  : currentStep === 'user_address' || currentStep === 'handshake'
                   ? 'bg-[#d8f3dc] text-[#1b4332]'
                   : 'bg-gray-200 text-gray-500'
               }`}
             >
               2
             </div>
-            <span className="text-[11px] font-bold text-[#1b4332]">{authStrings.stepIdentity}</span>
+            <span className="text-[10px] sm:text-[11px] font-bold text-[#1b4332] truncate">{authStrings.stepIdentity}</span>
           </div>
-          <div className="w-6 h-0.5 bg-emerald-200" />
-          <div className="flex-1 flex items-center gap-1.5">
+          <div className="w-3 sm:w-5 h-0.5 bg-emerald-200" />
+          <div className="flex-1 flex items-center gap-1">
+            <div
+              className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-black transition-all ${
+                currentStep === 'user_address'
+                  ? 'bg-[#1b4332] text-white ring-4 ring-emerald-200'
+                  : currentStep === 'handshake'
+                  ? 'bg-[#d8f3dc] text-[#1b4332]'
+                  : 'bg-gray-200 text-gray-500'
+              }`}
+            >
+              3
+            </div>
+            <span className="text-[10px] sm:text-[11px] font-bold text-[#1b4332] truncate">{authStrings.stepAddress}</span>
+          </div>
+          <div className="w-3 sm:w-5 h-0.5 bg-emerald-200" />
+          <div className="flex-1 flex items-center gap-1">
             <div
               className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-black transition-all ${
                 currentStep === 'handshake'
@@ -395,9 +448,9 @@ export const VoiceAuthGate: React.FC<VoiceAuthGateProps> = ({
                   : 'bg-gray-200 text-gray-500'
               }`}
             >
-              3
+              4
             </div>
-            <span className="text-[11px] font-bold text-[#1b4332]">{authStrings.stepLogin}</span>
+            <span className="text-[10px] sm:text-[11px] font-bold text-[#1b4332] truncate">{authStrings.stepLogin}</span>
           </div>
         </div>
 
@@ -410,17 +463,23 @@ export const VoiceAuthGate: React.FC<VoiceAuthGateProps> = ({
             className="w-full h-full object-contain pointer-events-none"
           />
           
-          {/* Animated Central Mic Node */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div
-              className={`w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-all transform ${
+          {/* Animated Central Mic Node (Clickable for 1-Tap Mobile Unlock) */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-auto">
+            <button
+              type="button"
+              onClick={() => {
+                SpeechService.unlockAudio();
+                startListeningTurn();
+              }}
+              title="Tap to speak or activate mic"
+              className={`w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-all transform cursor-pointer active:scale-95 ${
                 assistantState === 'listening'
                   ? 'bg-red-500 text-white ring-8 ring-red-200 scale-110 animate-pulse'
                   : assistantState === 'speaking'
                   ? 'bg-[#1b4332] text-white ring-8 ring-emerald-200 scale-105'
                   : assistantState === 'verified'
                   ? 'bg-emerald-600 text-white ring-8 ring-emerald-100 scale-110'
-                  : 'bg-[#2d6a4f] text-white'
+                  : 'bg-[#2d6a4f] text-white hover:bg-[#1b4332]'
               }`}
             >
               {assistantState === 'listening' ? (
@@ -430,7 +489,7 @@ export const VoiceAuthGate: React.FC<VoiceAuthGateProps> = ({
               ) : (
                 <Volume2 className="w-6 h-6 animate-pulse" />
               )}
-            </div>
+            </button>
           </div>
         </div>
 
@@ -477,7 +536,10 @@ export const VoiceAuthGate: React.FC<VoiceAuthGateProps> = ({
             <div className="flex items-center justify-center gap-3">
               <button
                 type="button"
-                onClick={() => handleVoiceTurnAnswer('Seller')}
+                onClick={() => {
+                  SpeechService.unlockAudio();
+                  handleVoiceTurnAnswer('Seller');
+                }}
                 className="flex items-center gap-2 bg-white hover:bg-emerald-50 text-[#1b4332] px-4 py-2 rounded-xl text-xs font-black border border-white/80 shadow-xs transition-all active:scale-95 cursor-pointer"
               >
                 <Store className="w-3.5 h-3.5 text-[#2d6a4f]" />
@@ -485,7 +547,10 @@ export const VoiceAuthGate: React.FC<VoiceAuthGateProps> = ({
               </button>
               <button
                 type="button"
-                onClick={() => handleVoiceTurnAnswer('Buyer')}
+                onClick={() => {
+                  SpeechService.unlockAudio();
+                  handleVoiceTurnAnswer('Buyer');
+                }}
                 className="flex items-center gap-2 bg-white hover:bg-emerald-50 text-[#1b4332] px-4 py-2 rounded-xl text-xs font-black border border-white/80 shadow-xs transition-all active:scale-95 cursor-pointer"
               >
                 <ShoppingBag className="w-3.5 h-3.5 text-[#2d6a4f]" />
@@ -498,17 +563,38 @@ export const VoiceAuthGate: React.FC<VoiceAuthGateProps> = ({
             <div className="flex items-center justify-center gap-2">
               <button
                 type="button"
-                onClick={() => handleVoiceTurnAnswer('Ramvati Devi')}
+                onClick={() => {
+                  SpeechService.unlockAudio();
+                  handleVoiceTurnAnswer('Ramvati Devi');
+                }}
                 className="bg-white hover:bg-emerald-50 text-[#1b4332] px-3 py-1.5 rounded-xl text-xs font-bold border border-white/80 shadow-xs transition-all active:scale-95 cursor-pointer"
               >
                 {authStrings.sayName}
               </button>
               <button
                 type="button"
-                onClick={() => handleVoiceTurnAnswer('9876543210')}
+                onClick={() => {
+                  SpeechService.unlockAudio();
+                  handleVoiceTurnAnswer('9876543210');
+                }}
                 className="bg-white hover:bg-emerald-50 text-[#1b4332] px-3 py-1.5 rounded-xl text-xs font-bold border border-white/80 shadow-xs transition-all active:scale-95 cursor-pointer"
               >
                 {authStrings.sayPhone}
+              </button>
+            </div>
+          )}
+
+          {currentStep === 'user_address' && (
+            <div className="flex items-center justify-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  SpeechService.unlockAudio();
+                  handleVoiceTurnAnswer('Gorakhpur, Uttar Pradesh');
+                }}
+                className="bg-white hover:bg-emerald-50 text-[#1b4332] px-3 py-1.5 rounded-xl text-xs font-bold border border-white/80 shadow-xs transition-all active:scale-95 cursor-pointer"
+              >
+                {authStrings.sayAddress}
               </button>
             </div>
           )}

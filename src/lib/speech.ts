@@ -41,10 +41,29 @@ export class SpeechService {
     return resolveVoice(languageCode, all).voice;
   }
 
+  /** Global audio and speech synthesis unlocker for mobile and desktop */
+  static unlockAudio(): void {
+    if (typeof window === 'undefined') return;
+    try {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.resume();
+        const dummy = new SpeechSynthesisUtterance('');
+        dummy.volume = 0.01;
+        window.speechSynthesis.speak(dummy);
+      }
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      if (AudioCtx) {
+        const ctx = new AudioCtx();
+        ctx.resume().then(() => ctx.close()).catch(() => {});
+      }
+    } catch {
+      // ignore
+    }
+  }
+
   // Speaks text using Web Speech API in the selected regional language.
-  // Voices are preloaded lazily on first use so a regional (e.g. hi-IN) voice is
-  // resolved instead of silently falling back to reading Indian-langauge text
-  // back in an English accent. A mismatched voice is never forced onto text.
+  // Voices are preloaded lazily on first use and gracefully fall back on desktop
+  // so desktop narration never remains silent.
   static speak(
     text: string,
     languageCode: SupportedLanguageCode,
@@ -60,42 +79,69 @@ export class SpeechService {
     const speakNow = () => {
       try {
         window.speechSynthesis.cancel(); // cancel any ongoing speech
+        if (window.speechSynthesis.paused) {
+          window.speechSynthesis.resume();
+        }
 
         const utterance = new SpeechSynthesisUtterance(text);
+        // Retain global reference to prevent Chrome's garbage-collection bug on desktop
+        (window as any).__activeUtterance = utterance;
+
         const langConfig = SUPPORTED_LANGUAGES.find((l) => l.code === languageCode);
         const targetLocale = langConfig ? langConfig.speechLocale : 'en-IN';
-        utterance.lang = targetLocale;
-        utterance.rate = 0.95; // slightly slower for uneducated rural listeners
-        utterance.pitch = 1.05; // warm, friendly tone
 
-        // Select an authentic regional voice. For native-language targets we only
-        // assign a voice when its language actually matches; otherwise the engine
-        // picks a voice itself from utterance.lang so Hindi text never gets an
-        // English voice (which previously garbled pronunciation).
         const voices =
           this.cachedVoices && this.cachedVoices.length
             ? this.cachedVoices
             : window.speechSynthesis.getVoices();
+
         if (voices && voices.length) {
           this.cachedVoices = voices;
           const resolved = resolveVoice(languageCode, voices);
-          if (resolved.voice && resolved.matched) {
+          if (resolved.voice) {
             utterance.voice = resolved.voice;
+            // If the matched voice is native regional, keep the regional target locale.
+            // If falling back to English on desktop, use the voice's locale so Windows SAPI doesn't abort.
+            utterance.lang = resolved.matched ? targetLocale : resolved.voice.lang;
+          } else {
+            utterance.lang = targetLocale;
           }
+        } else {
+          utterance.lang = targetLocale;
         }
+
+        utterance.rate = 0.95; // slightly slower for clear listening
+        utterance.pitch = 1.05; // warm, friendly tone
+
+        let hasFinished = false;
+        const finish = () => {
+          if (hasFinished) return;
+          hasFinished = true;
+          (window as any).__activeUtterance = null;
+          if (onEnd) onEnd();
+        };
 
         utterance.onstart = () => {
           if (onStart) onStart();
         };
-        utterance.onend = () => {
-          if (onEnd) onEnd();
-        };
+        utterance.onend = finish;
         utterance.onerror = (e) => {
-          console.warn('Speech synthesis error:', e);
-          if (onEnd) onEnd();
+          console.warn('Speech synthesis event:', e.error);
+          finish();
         };
 
-        window.speechSynthesis.speak(utterance);
+        // Micro-delay prevents Chromium on desktop from dropping new utterance immediately after cancel()
+        setTimeout(() => {
+          try {
+            if (window.speechSynthesis.paused) {
+              window.speechSynthesis.resume();
+            }
+            window.speechSynthesis.speak(utterance);
+          } catch (err) {
+            console.error('Speech call error:', err);
+            finish();
+          }
+        }, 25);
       } catch (err) {
         console.error('Speech error:', err);
         if (onEnd) onEnd();

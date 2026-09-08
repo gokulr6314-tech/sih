@@ -983,12 +983,12 @@ export const GeminiLiveVoiceModal: React.FC<GeminiLiveVoiceModalProps> = ({
             </div>
           </div>
 
-          {/* Bottom Bar: 1-Tap Quick Keywords & Direct Input */}
+          {/* Bottom Bar: Quick Suggestions & Direct Input */}
           <div className="px-6 py-4 flex flex-col gap-3">
             {currentStep !== 'confirmation' && (
               <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
                 <span className="text-[10px] font-bold uppercase text-emerald-300/70 whitespace-nowrap">
-                  1-Tap:
+                  {currentStep === 'pricing' ? '💡 Market Price Suggestions:' : 'Suggestions:'}
                 </span>
                 {currentConfig.fallbackKeywords(language).map((kw, i) => (
                   <button
@@ -996,6 +996,7 @@ export const GeminiLiveVoiceModal: React.FC<GeminiLiveVoiceModalProps> = ({
                     type="button"
                     onClick={() => processTurnAnswer(kw)}
                     className="bg-white/10 hover:bg-emerald-600/30 text-emerald-100 hover:text-white px-2.5 py-1 rounded-xl text-xs font-semibold whitespace-nowrap border border-white/10 hover:border-emerald-400/50 transition-all cursor-pointer active:scale-95"
+                    title={currentStep === 'pricing' ? `Suggested benchmark: ${kw}` : undefined}
                   >
                     {kw}
                   </button>

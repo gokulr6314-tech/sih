@@ -30,7 +30,7 @@ export const TURN_PROMPTS: Record<SupportedLanguageCode, Record<ListingTurn, str
     product: 'कृपया अपने शब्दों में अपने उत्पाद का नाम और वह क्या है, बताइए।',
     materials: 'ठीक है, {product}। आपने कौन-सी सामग्री इस्तेमाल की और इसे कैसे बनाया?',
     camera: 'बहुत बढ़िया! अब अपना उत्पाद कैमरे के सामने रखें। जब फोटो बिल्कुल सही लगे तो हरा बटन दबाएँ। पृष्ठभूमि मैं अपने आप साफ़ कर दूँगी।',
-    pricing: 'बाजार तुलना यहाँ है। इस शिल्प की उचित कीमत लगभग {target} रुपये है। आपने {price} रुपये बताया था। क्या हम {target} रुपये पर सहमत हों? नई रकम बोलिए या "फिर सुनाइए" कहिए।',
+    pricing: 'कारीगर जी, आप अपने {product} के लिए कितने रुपये मूल्य रखना चाहते हैं? बोलकर अपनी मनपसंद कीमत बताएं।',
     review: 'सब तैयार है! शीर्षक: {product}। SEO और उचित कीमत सेट हो गई है। क्या मैं इसे खरीदारों की दुकान पर प्रकाशित करूँ?',
     published: 'प्रकाशित हो गया! आपका उत्पाद अब बाजार में लाइव है। धन्यवाद, {name} जी!',
   },
@@ -39,7 +39,7 @@ export const TURN_PROMPTS: Record<SupportedLanguageCode, Record<ListingTurn, str
     product: 'உங்கள் வார்த்தைகளில் உங்கள் பொருளின் பெயரும் அது என்னவென்றும் சொல்லுங்கள்.',
     materials: 'சரி, {product}. எந்த பொருட்களைப் பயன்படுத்தினீர்கள், எப்படி உருவாக்கினீர்கள்?',
     camera: 'அருமை! இப்போது உங்கள் பொருளைக் கேமராவின் முன் வைக்கவும். படம் சரியாகத் தோன்றும்போது பச்சை பொத்தானை அழுத்தவும். பின்னணியை நான் தானாகவே சுத்தம் செய்வேன்.',
-    pricing: 'சந்தை ஒப்பீடு இங்கே. இந்த கைவினைப்பொருளின் நியாயமான விலை சுமார் {target} ரூபாய். நீங்கள் {price} ரூபாய் சொன்னீர்கள். {target} ரூபாய் சரிபார்க்கலாமா? புதிய தொகையைச் சொல்லுங்கள் அல்லது “மீண்டும் சொல்” என்று சொல்லுங்கள்.',
+    pricing: 'உங்கள் {product} கைவினைப் பொருளுக்கு நீங்கள் என்ன விலை நிர்ணயிக்க விரும்புகிறீர்கள்? உங்கள் விருப்ப விலையைக் கூறுங்கள்.',
     review: 'எல்லாம் தயார்! தலைப்பு: {product}. SEO மற்றும் நியாயமான விலை அமைக்கப்பட்டது. வாங்குபவர் கடையில் வெளியிடட்டுமா?',
     published: 'வெளியிடப்பட்டது! உங்கள் பொருள் இப்போது சந்தையில் நேரடியாக உள்ளது. நன்றி, {name} ஜி!',
   },
@@ -47,8 +47,8 @@ export const TURN_PROMPTS: Record<SupportedLanguageCode, Record<ListingTurn, str
     intro: 'నమస్కారం {name} గారూ! మీ భాషలోనే మీ వస్తువును జాబితా చేయడానికి సహాయం చేస్తాను. మొదలుపెడదాం.',
     product: 'మీ స్వంత మాటల్లో మీ ఉత్పత్తి పేరు మరియు అది ఏమిటో చెప్పండి.',
     materials: 'సరే, {product}. మీరు ఏ పదార్థాలు ఉపయోగించారు, ఎలా తయారు చేశారు?',
-    camera: 'చాలా బాగుంది! ఇప్పుడు మీ ఉత్పత్తిని కెమెరా ముందు ఉంచండి. ఫోటో పర్ఫెక్ట్గా ఉన్నప్పుడు ఆకుపచ్చ బటన్ నొక్కండి. నేపథ్యాన్ని నేను స్వయంచాలకంగా శుభ్రం చేస్తాను.',
-    pricing: 'మార్కెట్ పోలిక ఇక్కడ ఉంది. ఈ హస్తకళకు సరసమైన ధర దాదాపు {target} రూపాయలు. మీరు {price} రూపాయలు చెప్పారు. {target} రూపాయలకు అంగీకరిస్తామా? కొత్త మొత్తం చెప్పండి లేదా “మళ్ళీ చెప్పండి” అనండి.',
+    camera: 'చాలా బాగుంది! ఇప్పుడు మీ ఉత్పత్తిని కెమెరా ముందు ఉంచండి. ఫోటో పర్ఫెక్ట్గా ఉన్నప్పుడు ఆకుపచ్చ బటన్ నొక్కండి. నేపథ్యాన్ని నేను స్వయంచాలకంగా శుభ્રం చేస్తాను.',
+    pricing: 'మీ {product} వస్తువుకు మీరు ఎంత ధర నిర్ణయించాలనుకుంటున్నారు? మీ కోరుకున్న ధరను చెప్పండి.',
     review: 'అంతా సిద్ధం! టైటిల్: {product}. SEO మరియు సరసమైన ధర సెట్ చేయబడ్డాయి. కొనుగోలుదారుల దుకాణంలో ప్రచురించాలా?',
     published: 'ప్రచురించబడింది! మీ ఉత్పత్తి ఇప్పుడు మార్కెట్లో లైవ్లో ఉంది. ధన్యవాదాలు, {name} గారూ!',
   },
@@ -57,7 +57,7 @@ export const TURN_PROMPTS: Record<SupportedLanguageCode, Record<ListingTurn, str
     product: 'অনুগ্রহ করে আপনার নিজের ভাষায় পণ্যের নাম এবং এটি কী তা বলুন।',
     materials: 'ঠিক আছে, {product}। আপনি কোন উপকরণ ব্যবহার করেছেন এবং কীভাবে তৈরি করেছেন?',
     camera: 'দারুণ! এখন আপনার পণ্যটি ক্যামেরার সামনে রাখুন। ছবি নিখুঁত লাগলে সবুজ বাটন চাপুন। আমি ব্যাকগ্রাউন্ড নিজে থেকেই পরিষ্কার করে দেব।',
-    pricing: 'বাজার তুলনা এখানে। এই নৈপুণ্যের ন্যায্য দাম প্রায় {target} টাকা। আপনি {price} টাকা বলেছিলেন। আমরা কি {target} টাকায় রাজি হব? নতুন পরিমাণ বলুন বা “আবার বলুন” বলুন।',
+    pricing: 'আপনার {product} পণ্যের জন্য আপনি কত টাকা দাম রাখতে চান? আপনার পছন্দের মূল্য বলুন।',
     review: 'সব প্রস্তুত! শিরোনাম: {product}। এসইও এবং ন্যায্য দাম ঠিক হয়েছে। ক্রেতার দোকানে প্রকাশ করব কি?',
     published: 'প্রকাশিত হয়েছে! আপনার পণ্য এখন বাজারে লাইভ। ধন্যবাদ, {name} জি!',
   },
@@ -66,7 +66,7 @@ export const TURN_PROMPTS: Record<SupportedLanguageCode, Record<ListingTurn, str
     product: 'कृपया तुमच्या शब्दांत तुमच्या उत्पादनाचे नाव आणि ते काय आहे ते सांगा.',
     materials: 'ठीक आहे, {product}. तुम्ही कोणत्या सामग्री वापरल्या आणि ते कसे बनवले?',
     camera: 'छान! आता तुमचे उत्पादन कॅमेर्यासमोर ठेवा. फोटो अगदी योग्य दिसल्यावर हिरवा बटण दाबा. पार्श्वभूमी मी आपोआप स्वच्छ करेन.',
-    pricing: 'बाजार तुलना येथे आहे. या हस्तकलेची योग्य किंमत सुमारे {target} रुपये आहे. तुम्ही {price} रुपये सांगितले होते. आपण {target} रुपयांवर सहमत होऊ का? नवीन रक्कम बोला किंवा “पुन्हा सांगा” म्हणा.',
+    pricing: 'तुमच्या {product} साठी आपण किती रुपये किंमत ठेवू इच्छिता? आपली अपेक्षित किंमत सांगा.',
     review: 'सर्व तयार आहे! शीर्षक: {product}. SEO आणि योग्य किंमत सेट झाली आहे. खरेदीदारांच्या दुकानात प्रकाशित करू का?',
     published: 'प्रकाशित झाले! तुमचे उत्पादन आता बाजारात लाइव्ह आहे. धन्यवाद, {name} जी!',
   },
@@ -75,7 +75,7 @@ export const TURN_PROMPTS: Record<SupportedLanguageCode, Record<ListingTurn, str
     product: 'કૃપા કરીને તમારા શબ્દોમાં તમારા ઉત્પાદનનું નામ અને તે શું છે તે કહો.',
     materials: 'ઠીક છે, {product}. તમે કઈ સામગ્રી વાપરી અને કેવી રીતે બનાવ્યું?',
     camera: 'ઉત્તમ! હવે તમારા ઉત્પાદનને કૅમેરા સામે મૂકો. ફોટો બરાબર લાગે ત્યારે લીલું બટન દબાવો. પૃષ્ઠભૂમિ હું આપમેળે સાફ કરીશ.',
-    pricing: 'બજાર સરખામણી અહીં છે. આ હસ્તકલાની યોગ્ય કિંમત આશરે {target} રૂપિયા છે. તમે {price} રૂપિયા કહ્યા હતા. શું આપણે {target} રૂપિયા સ્વીકારીએ? નવી રકમ બોલો અથવા “ફરી કહો” કહો.',
+    pricing: 'તમારા {product} માટે તમે કેટલા રૂપિયા કિંમત રાખવા માંગો છો? તમારી ઇચ્છિત કિંમત જણાવો.',
     review: 'બધું તૈયાર છે! શીર્ષક: {product}. SEO અને યોગ્ય ભાવ સેટ થઈ ગયા છે. ખરીદનારની દુકાનમાં પ્રકાશિત કરું?',
     published: 'પ્રકાશિત થઈ ગયું! તમારું ઉત્પાદન હવે બજારમાં લાઇવ છે. આભાર, {name} જી!',
   },
@@ -84,7 +84,7 @@ export const TURN_PROMPTS: Record<SupportedLanguageCode, Record<ListingTurn, str
     product: 'ದಯವಿಟ್ಟು ನಿಮ್ಮ ಸ್ವಂತ ಮಾತುಗಳಲ್ಲಿ ಉತ್ಪನ್ನದ ಹೆಸರು ಮತ್ತು ಅದು ಏನೆಂದು ಹೇಳಿ.',
     materials: 'ಸರಿ, {product}. ನೀವು ಯಾವ ವಸ್ತುಗಳನ್ನು ಬಳಸಿದಿರಿ, ಹೇಗೆ ಮಾಡಿದಿರಿ?',
     camera: 'ಉತ್ತಮ! ಈಗ ನಿಮ್ಮ ಉತ್ಪನ್ನವನ್ನು ಕ್ಯಾಮೆರಾ ಮುಂದೆ ಇರಿಸಿ. ಫೋಟೋ ಸರಿಯಾಗಿ ಕಂಡಾಗ ಹಸಿರು ಗುಂಡಿ ಒತ್ತಿ. ಹಿನ್ನೆಲೆಯನ್ನು ನಾನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಸ್ವಚ್ಛಗೊಳಿಸುತ್ತೇನೆ.',
-    pricing: 'ಮಾರುಕಟ್ಟೆ ಹೋಲಿಕೆ ಇಲ್ಲಿದೆ. ಈ ಕರಕುಶಲದ ನ್ಯಾಯಯುತ ಬೆಲೆ ಸುಮಾರು {target} ರೂಪಾಯಿ. ನೀವು {price} ರೂಪಾಯಿ ಹೇಳಿದ್ದೀರಿ. {target} ರೂಪಾಯಿಗೆ ಒಪ್ಪುತ್ತೇವೆಯೇ? ಹೊಸ ಮೊತ್ತ ಹೇಳಿ ಅಥವಾ “ಮತ್ತೆ ಹೇಳಿ” ಎಂದು ಹೇಳಿ.',
+    pricing: 'ನಿಮ್ಮ {product} ಕರಕುಶಲ ವಸ್ತುವಿಗೆ ನೀವು ಎಷ್ಟು ಬೆಲೆ ನಿಗದಿಪಡಿಸಲು ಬಯಸುತ್ತೀರಿ? ನಿಮ್ಮ ಬೆಲೆಯನ್ನು ತಿಳಿಸಿ.',
     review: 'ಎಲ್ಲಾ ಸಿದ್ಧ! ಶೀರ್ಷಿಕೆ: {product}. SEO ಮತ್ತು ನ್ಯಾಯಯುತ ಬೆಲೆ ಹೊಂದಿಸಲಾಗಿದೆ. ಖರೀದಿದಾರರ ಅಂಗಡಿಯಲ್ಲಿ ಪ್ರಕಟಿಸಲೇ?',
     published: 'ಪ್ರಕಟಿಸಲಾಗಿದೆ! ನಿಮ್ಮ ಉತ್ಪನ್ನ ಈಗ ಮಾರುಕಟ್ಟೆಯಲ್ಲಿ ಲೈವ್ ಆಗಿದೆ. ಧನ್ಯವಾದಗಳು, {name} ಜಿ!',
   },
@@ -93,7 +93,7 @@ export const TURN_PROMPTS: Record<SupportedLanguageCode, Record<ListingTurn, str
     product: 'നിങ്ങളുടെ വാക്കുകളിൽ ഉൽപ്പന്നത്തിന്റെ പേരും അത് എന്താണെന്നും പറയൂ.',
     materials: 'ശരി, {product}. ഏത് സാമഗ്രികളാണ് ഉപയോഗിച്ചത്, എങ്ങനെ ഉണ്ടാക്കി?',
     camera: 'കൊള്ളാം! ഇപ്പോൾ നിങ്ങളുടെ ഉൽപ്പന്നം ക്യാമറയ്ക്ക് മുന്നിൽ വയ്ക്കുക. ഫോട്ടോ കൃത്യമായി തോന്നുമ്പോൾ പച്ച ബട്ടൺ അമർത്തുക. പശ്ചാത്തലം ഞാൻ സ്വയം വൃത്തിയാക്കും.',
-    pricing: 'വിപണി താരതമ്യം ഇതാ. ഈ കരകൗശലത്തിന്റെ ന്യായമായ വില ഏകദേശം {target} രൂപയാണ്. നിങ്ങൾ {price} രൂപ പറഞ്ഞു. {target} രൂപയ്ക്ക് സമ്മതിക്കാമോ? പുതിയ തുക പറയുക അല്ലെങ്കിൽ “വീണ്ടും പറയൂ” എന്ന് പറയുക.',
+    pricing: 'നിങ്ങളുടെ {product} ഉൽപ്പന്നത്തിന് നിങ്ങൾ എത്ര രൂപ വില നിശ്ചയിക്കാൻ ആഗ്രഹിക്കുന്നു? നിങ്ങളുടെ ഇഷ്ടവില പറയൂ.',
     review: 'എല്ലാം തയ്യാറാണ്! തലക്കെട്ട്: {product}. SEO-യും ന്യായമായ വിലയും സജ്ജമാണ്. വാങ്ങുന്നവരുടെ കടയിൽ പ്രസിദ്ധീകരിക്കട്ടെ?',
     published: 'പ്രസിദ്ധീകരിച്ചു! നിങ്ങളുടെ ഉൽപ്പന്നം ഇപ്പോൾ മാർക്കറ്റിൽ ലൈവ് ആണ്. നന്ദി, {name} ജി!',
   },
@@ -102,7 +102,7 @@ export const TURN_PROMPTS: Record<SupportedLanguageCode, Record<ListingTurn, str
     product: 'ଦୟାକରି ଆପଣଙ୍କ ମନର କଥାରେ ଉତ୍ପାଦର ନାମ ଓ ତାହା କଣ ବୋଲି କୁହନ୍ତୁ।',
     materials: 'ଠିକ ଅଛି, {product}। ଆପଣ କେଉଁ ସାମଗ୍ରୀ ବ୍ୟବହାର କଲେ ଏବଂ କିପରି ତିଆରି କଲେ?',
     camera: 'ବହୁତ ଭଲ! ଏବେ ଆପଣଙ୍କ ଉତ୍ପାଦକୁ କ୍ୟାମେରା ସାମ୍ନାରେ ରଖନ୍ତୁ। ଫଟୋ ସଠିକ୍ ଦେଖାଗଲେ ସବୁଜ ବଟନ୍ ଦବାନ୍ତୁ। ମୁଁ ପୃଷ୍ଠଭୂମିକୁ ନିଜେ ସଫା କରିବି।',
-    pricing: 'ବଜାର ତୁଳନା ଏଠାରେ ଅଛି। ଏହି କାରିଗରୀର ଉଚିତ ମୂଲ୍ୟ ପ୍ରାୟ {target} ଟଙ୍କା। ଆପଣ {price} ଟଙ୍କା କହିଥିଲେ। ଆମେ {target} ଟଙ୍କାରେ ରାଜି ହେବା? ନୂଆ ରାଶି କୁହନ୍ତୁ କିମ୍ବା “ଆଉ ଥରେ କୁହନ୍ତୁ”।',
+    pricing: 'ଆପଣଙ୍କ {product} ପାଇଁ ଆପଣ କେତେ ଟଙ୍କା ମୂଲ୍ୟ ରଖିବାକୁ ଚାହାଁନ୍ତି? ଆପଣଙ୍କ ମନପସନ୍ଦ ମୂଲ୍ୟ କୁହନ୍ତୁ।',
     review: 'ସବୁ ପ୍ରସ୍ତୁତ! ଶୀର୍ଷକ: {product}। SEO ଏବଂ ଉଚିତ ମୂଲ୍ୟ ସେଟ୍ ହୋଇଛି। କ୍ରେତା ଦୋକାନରେ ପ୍ରକାଶ କରିବି?',
     published: 'ପ୍ରକାଶିତ ହେଲା! ଆପଣଙ୍କ ଉତ୍ପାଦ ବଜାରରେ ଲାଇଭ୍ ଅଛି। ଧନ୍ୟବାଦ, {name} ଜୀ!',
   },
@@ -111,7 +111,7 @@ export const TURN_PROMPTS: Record<SupportedLanguageCode, Record<ListingTurn, str
     product: 'ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੇ ਸ਼ਬਦਾਂ ਵਿੱਚ ਆਪਣੇ ਉਤਪਾਦ ਦਾ ਨਾਮ ਅਤੇ ਇਹ ਕੀ ਹੈ ਦੱਸੋ।',
     materials: 'ਠੀਕ ਹੈ, {product}। ਤੁਸੀਂ ਕਿਹੜੀਆਂ ਸਮੱਗਰੀਆਂ ਵਰਤੀਆਂ ਅਤੇ ਕਿਵੇਂ ਬਣਾਇਆ?',
     camera: 'ਬਹੁਤ ਵਧੀਆ! ਹੁਣ ਆਪਣੇ ਉਤਪਾਦ ਨੂੰ ਕੈਮਰੇ ਅੱਗੇ ਰੱਖੋ। ਜਦੋਂ ਫੋਟੋ ਬਿਲਕੁਲ ਸਹੀ ਲੱਗੇ ਤਾਂ ਹਰਾ ਬਟਨ ਦਬਾਓ। ਪਿਛੋਕੜ ਮੈਂ ਆਪੇ ਸਾਫ਼ ਕਰ ਦਿਆਂਗਾ।',
-    pricing: 'ਬਾਜ਼ਾਰ ਤੁਲਨਾ ਇੱਥੇ ਹੈ। ਇਸ ਕਲਾ ਦੀ ਉਚਿਤ ਕੀਮਤ ਲਗਭਗ {target} ਰੁਪਏ ਹੈ। ਤੁਸੀਂ {price} ਰੁਪਏ ਦੱਸੇ ਸਨ। ਕੀ ਅਸੀਂ {target} ਰੁਪਏ ਮੰਨੀਏ? ਨਵੀਂ ਰਕਮ ਬੋਲੋ ਜਾਂ "ਫਿਰ ਦੱਸੋ" ਕਹੋ।',
+    pricing: 'ਤੁਸੀਂ ਆਪਣੇ {product} ਲਈ ਕਿੰਨਾ ਮੁੱਲ ਰੱਖਣਾ ਚਾਹੁੰਦੇ ਹੋ? ਆਪਣੀ ਮਨਪਸੰਦ ਕੀਮਤ ਦੱਸੋ।',
     review: 'ਸਭ ਤਿਆਰ ਹੈ! ਸਿਰਲੇਖ: {product}। SEO ਅਤੇ ਉਚਿਤ ਕੀਮਤ ਸੈੱਟ ਹੋ ਗਈ ਹੈ। ਕੀ ਮੈਂ ਇਸਨੂੰ ਖਰੀਦਦਾਰਾਂ ਦੀ ਦੁਕਾਨ ਵਿੱਚ ਪ੍ਰਕਾਸ਼ਿਤ ਕਰਾਂ?',
     published: 'ਪ੍ਰਕਾਸ਼ਿਤ ਹੋ ਗਿਆ! ਤੁਹਾਡਾ ਉਤਪਾਦ ਹੁਣ ਬਾਜ਼ਾਰ ਵਿੱਚ ਲਾਈਵ ਹੈ। ਧੰਨਵਾਦ, {name} ਜੀ!',
   },
@@ -120,7 +120,7 @@ export const TURN_PROMPTS: Record<SupportedLanguageCode, Record<ListingTurn, str
     product: 'Please tell me your product name and what it is, in your own words.',
     materials: 'Sure, {product}. Which materials did you use, and how did you craft it?',
     camera: 'Excellent! Now place your product in front of the camera. Press the green button when the photo looks perfect. I will clean the background automatically.',
-    pricing: 'Here is the market comparison. The fair price for this craft is around {target} rupees. You suggested {price}. Shall we agree on {target}? Say a new amount, or say "repeat".',
+    pricing: 'What price would you like to set for your {product} in rupees? Tell me your desired price.',
     review: 'Everything is ready! Title: {product}. SEO and fair pricing are set. Shall I publish it to the buyer marketplace?',
     published: 'Published successfully! Your product is now live in the marketplace. Thank you, {name} ji!',
   },
@@ -575,13 +575,16 @@ export type AuthRole = 'Buyer' | 'Seller';
 export interface AuthStrings {
   welcomeSpoken: string;
   roleSpoken: string;
-  confirmSpoken: (name: string, role: AuthRole) => string;
+  addressSpoken: string;
+  confirmSpoken: (name: string, role: AuthRole, address?: string) => string;
   saySeller: string;
   sayBuyer: string;
   sayName: string;
   sayPhone: string;
+  sayAddress: string;
   stepRole: string;
   stepIdentity: string;
+  stepAddress: string;
   stepLogin: string;
   listening: string;
   speaking: string;
@@ -595,15 +598,18 @@ export const AUTH_STRINGS: Record<SupportedLanguageCode, AuthStrings> = {
   hi: {
     welcomeSpoken: 'नमस्ते! आज आप हमारे साथ जुड़ रहे हैं। कृपया बताइए — क्या आप कारीगर हैं या खरीदार?',
     roleSpoken: 'धन्यवाद! कृपया अपना नाम या पंजीकृत मोबाइल नंबर बताएं।',
-    confirmSpoken: (name, role) =>
-      `ठीक है, ${name} जी! आप ${role === 'Seller' ? 'कारीगर' : 'खरीदार'} के रूप में लॉग इन हो गए हैं। आइए, शुरू करें।`,
+    addressSpoken: 'धन्यवाद! आपका गाँव, शहर या कार्यशाला का पता क्या है?',
+    confirmSpoken: (name, role, address) =>
+      `ठीक है, ${name} जी! ${address ? address + ' से, ' : ''}आप ${role === 'Seller' ? 'कारीगर' : 'खरीदार'} के रूप में सत्यापित हो गए हैं। आइए, शुरू करें।`,
     saySeller: 'कहें: "कारीगर" (Seller)',
     sayBuyer: 'कहें: "खरीदार" (Buyer)',
     sayName: 'कहें: रामवती देवी',
     sayPhone: 'कहें: 9876543210',
+    sayAddress: 'कहें: "गोरखपुर, उत्तर प्रदेश"',
     stepRole: 'भूमिका',
     stepIdentity: 'पहचान',
-    stepLogin: 'लॉगिन',
+    stepAddress: 'पता',
+    stepLogin: 'सत्यापन',
     listening: 'आपकी आवाज़ सुनी जा रही है...',
     speaking: 'सहायिका बोल रही है...',
     verified: 'आवाज़ की पहचान सत्यापित हो गई!',
@@ -614,14 +620,17 @@ export const AUTH_STRINGS: Record<SupportedLanguageCode, AuthStrings> = {
   ta: {
     welcomeSpoken: 'வணக்கம்! இன்று நீங்கள் எங்களுடன் இணைகிறீர்கள். நீங்கள் விற்பவரா அல்லது வாங்குபவரா?',
     roleSpoken: 'நன்றி! தயவுசெய்து உங்கள் பெயர் அல்லது பதிவுசெய்யப்பட்ட கைபேசி எண்ணைச் சொல்லுங்கள்.',
-    confirmSpoken: (name, role) =>
-      `சரி, ${name}! நீங்கள் ${role === 'Seller' ? 'விற்பவர்' : 'வாங்குபவர்'} ஆக உள்நுழைந்துள்ளீர்கள். தொடங்குவோம்.`,
+    addressSpoken: 'நன்றி! உங்கள் கிராமம், நகரம் அல்லது பட்டறை முகவரி என்ன?',
+    confirmSpoken: (name, role, address) =>
+      `சரி, ${name}! ${address ? address + '-லிருந்து, ' : ''}நீங்கள் ${role === 'Seller' ? 'விற்பவர்' : 'வாங்குபவர்'} ஆக உறுதிப்படுத்தப்பட்டீர்கள். தொடங்குவோம்.`,
     saySeller: 'சொல்லுங்கள்: "விற்பவர்" (Seller)',
     sayBuyer: 'சொல்லுங்கள்: "வாங்குபவர்" (Buyer)',
     sayName: 'சொல்லுங்கள்: ராம்வதி தேவி',
     sayPhone: 'சொல்லுங்கள்: 9876543210',
+    sayAddress: 'சொல்லுங்கள்: "மதுரை, தமிழ்நாடு"',
     stepRole: 'பங்கு',
     stepIdentity: 'அடையாளம்',
+    stepAddress: 'முகவரி',
     stepLogin: 'உள்நுழைவு',
     listening: 'உங்கள் குரல் கேட்கப்படுகிறது...',
     speaking: 'உதவியாளர் பேசுகிறார்...',
@@ -633,15 +642,18 @@ export const AUTH_STRINGS: Record<SupportedLanguageCode, AuthStrings> = {
   te: {
     welcomeSpoken: 'నమస్కారం! ఈ రోజు మీరు మాతో చేరుతున్నారు. మీరు విక్రేతా లేదా కొనుగోలుదారా?',
     roleSpoken: 'ధన్యవాదాలు! దయచేసి మీ పేరు లేదా నమోదిత మొబైల్ నంబర్ చెప్పండి.',
-    confirmSpoken: (name, role) =>
-      `సరే, ${name}! మీరు ${role === 'Seller' ? 'విక్రేత' : 'కొనుగోలుదారు'}గా లాగిన్ అయ్యారు. ప్రారంభిద్దాం.`,
+    addressSpoken: 'ధన్యవాదాలు! మీ గ్రామం, నగరం లేదా వర్క్‌షాప్ చిరునామా ఏమిటి?',
+    confirmSpoken: (name, role, address) =>
+      `సరే, ${name}! ${address ? address + ' నుండి, ' : ''}మీరు ${role === 'Seller' ? 'విక్రేత' : 'కొనుగోలుదారు'}గా ధృవీకరించబడ్డారు. ప్రారంభిద్దాం.`,
     saySeller: 'చెప్పండి: "విక్రేత" (Seller)',
     sayBuyer: 'చెప్పండి: "కొనుగోలుదారు" (Buyer)',
     sayName: 'చెప్పండి: రామ్‌వతీ దేవి',
     sayPhone: 'చెప్పండి: 9876543210',
+    sayAddress: 'చెప్పండి: "వరంగల్, తెలంగాణ"',
     stepRole: 'పాత్ర',
     stepIdentity: 'గుర్తింపు',
-    stepLogin: 'లాగిన్',
+    stepAddress: 'చిరునామా',
+    stepLogin: 'ధృవీకరణ',
     listening: 'మీ గొంతు వినబడుతోంది...',
     speaking: 'సహాయకుడు మాట్లాడుతున్నాడు...',
     verified: 'వాయిస్ గుర్తింపు ధృవీకరించబడింది!',
@@ -652,14 +664,17 @@ export const AUTH_STRINGS: Record<SupportedLanguageCode, AuthStrings> = {
   bn: {
     welcomeSpoken: 'নমস্কার! আজ আপনি আমাদের সঙ্গে যুক্ত হচ্ছেন। আপনি কি বিক্রেতা নাকি ক্রেতা?',
     roleSpoken: 'ধন্যবাদ! অনুগ্রহ করে আপনার নাম বা নিবন্ধিত মোবাইল নম্বর বলুন।',
-    confirmSpoken: (name, role) =>
-      `ঠিক আছে, ${name}! আপনি ${role === 'Seller' ? 'বিক্রেতা' : 'ক্রেতা'} হিসাবে লগ ইন হয়েছেন। শুরু করা যাক।`,
+    addressSpoken: 'ধন্যবাদ! আপনার গ্রাম, শহর বা কর্মশালার ঠিকানা কী?',
+    confirmSpoken: (name, role, address) =>
+      `ঠিক আছে, ${name}! ${address ? address + ' থেকে, ' : ''}আপনি ${role === 'Seller' ? 'বিক্রেতা' : 'ক্রেতা'} হিসাবে যাচাইকৃত হয়েছেন। শুরু করা যাক।`,
     saySeller: 'বলুন: "বিক্রেতা" (Seller)',
     sayBuyer: 'বলুন: "ক্রেতা" (Buyer)',
     sayName: 'বলুন: রামবতী দেবী',
     sayPhone: 'বলুন: 9876543210',
+    sayAddress: 'বলুন: "শান্তিনিকেতন, পশ্চিমবঙ্গ"',
     stepRole: 'ভূমিকা',
     stepIdentity: 'পরিচয়',
+    stepAddress: 'ঠিকানা',
     stepLogin: 'লগইন',
     listening: 'আপনার কণ্ঠ শোনা হচ্ছে...',
     speaking: 'সহায়িকী বলছে...',
@@ -671,14 +686,17 @@ export const AUTH_STRINGS: Record<SupportedLanguageCode, AuthStrings> = {
   mr: {
     welcomeSpoken: 'नमस्कार! आज तुम्ही आमच्यासोबत सामील होत आहात. तुम्ही विक्रेता आहात की खरेदीदार?',
     roleSpoken: 'धन्यवाद! कृपया तुमचे नाव किंवा नोंदणीकृत मोबाईल क्रमांक सांगा.',
-    confirmSpoken: (name, role) =>
-      `ठीक आहे, ${name}! तुम्ही ${role === 'Seller' ? 'विक्रेता' : 'खरेदीदार'} म्हणून लॉग इन झाला आहात. चला, सुरुवात करूया.`,
+    addressSpoken: 'धन्यवाद! तुमचे गाव, शहर किंवा कार्यशाळेचा पत्ता काय आहे?',
+    confirmSpoken: (name, role, address) =>
+      `ठीक आहे, ${name}! ${address ? address + ' येथून, ' : ''}तुम्ही ${role === 'Seller' ? 'विक्रेता' : 'खरेदीदार'} म्हणून सत्यापित झाला आहात. चला, सुरुवात करूया.`,
     saySeller: 'म्हणा: "विक्रेता" (Seller)',
     sayBuyer: 'म्हणा: "खरेदीदार" (Buyer)',
     sayName: 'म्हणा: रामवती देवी',
     sayPhone: 'म्हणा: 9876543210',
+    sayAddress: 'म्हणा: "पैठण, महाराष्ट्र"',
     stepRole: 'भूमिका',
     stepIdentity: 'ओळख',
+    stepAddress: 'पत्ता',
     stepLogin: 'लॉगिन',
     listening: 'तुमचा आवाज ऐकला जात आहे...',
     speaking: 'सहाय्यिका बोलत आहे...',
@@ -690,14 +708,17 @@ export const AUTH_STRINGS: Record<SupportedLanguageCode, AuthStrings> = {
   gu: {
     welcomeSpoken: 'નમસ્તે! આજે તમે અમારી સાથે જોડાઈ રહ્યા છો. શું તમે વિક્રેતા છો કે ખરીદદાર?',
     roleSpoken: 'આભાર! કૃપા કરીને તમારું નામ અથવા નોંધાયેલ મોબાઈલ નંબર કહો.',
-    confirmSpoken: (name, role) =>
-      `બરાબર, ${name}! તમે ${role === 'Seller' ? 'વિક્રેતા' : 'ખરીદદાર'} તરીકે લોગિન થયા છો. ચાલો શરૂ કરીએ.`,
+    addressSpoken: 'આભાર! તમારું ગામ, શહેર કે કાર્યશાળાનું સરનામું શું છે?',
+    confirmSpoken: (name, role, address) =>
+      `બરાબર, ${name}! ${address ? address + ' થી, ' : ''}તમે ${role === 'Seller' ? 'વિક્રેતા' : 'ખરીદદાર'} તરીકે લોગિન થયા છો. ચાલો શરૂ કરીએ.`,
     saySeller: 'કહો: "વિક્રેતા" (Seller)',
     sayBuyer: 'કહો: "ખરીદદાર" (Buyer)',
     sayName: 'કહો: રામવતી દેવી',
     sayPhone: 'કહો: 9876543210',
+    sayAddress: 'કહો: "પાટણ, ગુજરાત"',
     stepRole: 'ભૂમિકા',
     stepIdentity: 'ઓળખ',
+    stepAddress: 'સરનામું',
     stepLogin: 'લોગિન',
     listening: 'તમારો અવાજ સંભળાય છે...',
     speaking: 'સહાયિકા બોલે છે...',
@@ -709,14 +730,17 @@ export const AUTH_STRINGS: Record<SupportedLanguageCode, AuthStrings> = {
   kn: {
     welcomeSpoken: 'ನಮಸ್ಕಾರ! ಇಂದು ನೀವು ನಮ್ಮೊಂದಿಗೆ ಸೇರುತ್ತಿದ್ದೀರಿ. ನೀವು ಮಾರಾಟಗಾರರೋ ಅಥವಾ ಖರೀದಿದಾರರೋ?',
     roleSpoken: 'ಧನ್ಯವಾದಗಳು! ದಯವಿಟ್ಟು ನಿಮ್ಮ ಹೆಸರು ಅಥವಾ ನೋಂದಾಯಿತ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯನ್ನು ತಿಳಿಸಿ.',
-    confirmSpoken: (name, role) =>
-      `ಸರಿ, ${name}! ನೀವು ${role === 'Seller' ? 'ಮಾರಾಟಗಾರ' : 'ಖರೀದಿದಾರ'} ಆಗಿ ಲಾಗಿನ್ ಮಾಡಿದ್ದೀರಿ. ಪ್ರಾರಂಭಿಸೋಣ.`,
+    addressSpoken: 'ಧನ್ಯವಾದಗಳು! ನಿಮ್ಮ ಗ್ರಾಮ, ನಗರ ಅಥವಾ ಕಾರ್ಯಾಗಾರದ ವಿಳಾಸವೇನು?',
+    confirmSpoken: (name, role, address) =>
+      `ಸರಿ, ${name}! ${address ? address + ' ನಿಂದ, ' : ''}ನೀವು ${role === 'Seller' ? 'ಮಾರಾಟಗಾರ' : 'ಖರೀದಿದಾರ'} ಆಗಿ ಲಾಗಿನ್ ಮಾಡಿದ್ದೀರಿ. ಪ್ರಾರಂಭಿಸೋಣ.`,
     saySeller: 'ಹೇಳಿ: "ಮಾರಾಟಗಾರ" (Seller)',
     sayBuyer: 'ಹೇಳಿ: "ಖರೀದಿದಾರ" (Buyer)',
     sayName: 'ಹೇಳಿ: ರಾಮ್‌ವತಿ ದೇವಿ',
     sayPhone: 'ಹೇಳಿ: 9876543210',
+    sayAddress: 'ಹೇಳಿ: "ಚನ್ನಪಟ್ಟಣ, ಕರ್ನಾಟಕ"',
     stepRole: 'ಪಾತ್ರ',
     stepIdentity: 'ಗುರುತು',
+    stepAddress: 'ವಿಳಾಸ',
     stepLogin: 'ಲಾಗಿನ್',
     listening: 'ನಿಮ್ಮ ಧ್ವನಿ ಕೇಳಲಾಗುತ್ತಿದೆ...',
     speaking: 'ಸಹಾಯಕಿ ಮಾತನಾಡುತ್ತಿದ್ದಾಳೆ...',
@@ -728,14 +752,17 @@ export const AUTH_STRINGS: Record<SupportedLanguageCode, AuthStrings> = {
   ml: {
     welcomeSpoken: 'നമസ്കാരം! ഇന്ന് നിങ്ങൾ ഞങ്ങളോടൊപ്പം ചേരുകയാണ്. നിങ്ങൾ വിൽപ്പനക്കാരനാണോ വാങ്ങുന്നയാളാണോ?',
     roleSpoken: 'നന്ദി! നിങ്ങളുടെ പേരോ രജിസ്റ്റർ ചെയ്ത മൊബൈൽ നമ്പറോ പറയുക.',
-    confirmSpoken: (name, role) =>
-      `ശരി, ${name}! നിങ്ങൾ ${role === 'Seller' ? 'വിൽപ്പനക്കാരൻ' : 'വാങ്ങുന്നയാൾ'} ആയി ലോഗിൻ ചെയ്തു. നമുക്ക് തുടങ്ങാം.`,
+    addressSpoken: 'നന്ദി! നിങ്ങളുടെ ഗ്രാമം, നഗരം അല്ലെങ്കിൽ വർക്ക്ഷോപ്പ് വിലാസം എന്താണ്?',
+    confirmSpoken: (name, role, address) =>
+      `ശരി, ${name}! ${address ? address + '-ൽ നിന്ന്, ' : ''}നിങ്ങൾ ${role === 'Seller' ? 'വിൽപ്പനക്കാരൻ' : 'വാങ്ങുന്നയാൾ'} ആയി ലോഗിൻ ചെയ്തു. നമുക്ക് തുടങ്ങാം.`,
     saySeller: 'പറയൂ: "വിൽപ്പനക്കാരൻ" (Seller)',
     sayBuyer: 'പറയൂ: "വാങ്ങുന്നയാൾ" (Buyer)',
     sayName: 'പറയൂ: രാംവതി ദേവി',
     sayPhone: 'പറയൂ: 9876543210',
+    sayAddress: 'പറയൂ: "തൃശ്ശൂർ, കേരളം"',
     stepRole: 'പങ്ക്',
     stepIdentity: 'തിരിച്ചറിയൽ',
+    stepAddress: 'വിലാസം',
     stepLogin: 'ലോഗിൻ',
     listening: 'നിങ്ങളുടെ ശബ്ദം കേൾക്കുന്നു...',
     speaking: 'സഹായി സംസാരിക്കുന്നു...',
@@ -747,14 +774,17 @@ export const AUTH_STRINGS: Record<SupportedLanguageCode, AuthStrings> = {
   or: {
     welcomeSpoken: 'ନମସ୍କାର! ଆଜି ଆପଣ ଆମ ସହ ଯୋଗ ଦେଉଛନ୍ତି। ଆପଣ ବିକ୍ରେତା କି କ୍ରେତା?',
     roleSpoken: 'ଧନ୍ୟବାଦ! ଦୟାକରି ଆପଣଙ୍କ ନାମ କିମ୍ବା ପଞ୍ଜୀକୃତ ମୋବାଇଲ୍ ନମ୍ବର କୁହନ୍ତୁ।',
-    confirmSpoken: (name, role) =>
-      `ଠିକ୍ ଅଛି, ${name}! ଆପଣ ${role === 'Seller' ? 'ବିକ୍ରେତା' : 'କ୍ରେତା'} ଭାବରେ ଲଗିନ୍ ହୋଇଛନ୍ତି। ଚାଲ, ଆରମ୍ଭ କରିବା।`,
+    addressSpoken: 'ଧନ୍ୟବାଦ! ଆପଣଙ୍କ ଗାଁ, ସହର କିମ୍ବା କାର୍ଯ୍ୟଶାଳାର ଠିକଣା କ’ଣ?',
+    confirmSpoken: (name, role, address) =>
+      `ଠିକ୍ ଅଛି, ${name}! ${address ? address + ' ରୁ, ' : ''}ଆପଣ ${role === 'Seller' ? 'ବିକ୍ରେତା' : 'କ୍ରେତା'} ଭାବରେ ଯାଞ୍ଚ ହୋଇଛନ୍ତି। ଚାଲ, ଆରମ୍ଭ କରିବା।`,
     saySeller: 'କୁହନ୍ତୁ: "ବିକ୍ରେତା" (Seller)',
     sayBuyer: 'କୁହନ୍ତୁ: "କ୍ରେତା" (Buyer)',
     sayName: 'କୁହନ୍ତୁ: ରାମବତୀ ଦେବୀ',
     sayPhone: 'କୁହନ୍ତୁ: 9876543210',
+    sayAddress: 'କୁହନ୍ତୁ: "ପିପିଲି, ଓଡ଼ିଶା"',
     stepRole: 'ଭୂମିକା',
     stepIdentity: 'ପରିଚୟ',
+    stepAddress: 'ଠିକଣା',
     stepLogin: 'ଲଗିନ୍',
     listening: 'ଆପଣଙ୍କ ସ୍ୱର ଶୁଣାଯାଉଛି...',
     speaking: 'ସହାୟିକା କହୁଛି...',
@@ -766,14 +796,17 @@ export const AUTH_STRINGS: Record<SupportedLanguageCode, AuthStrings> = {
   pa: {
     welcomeSpoken: 'ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ! ਅੱਜ ਤੁਸੀਂ ਸਾਡੇ ਨਾਲ ਜੁੜ ਰਹੇ ਹੋ। ਕੀ ਤੁਸੀਂ ਵਿਕਰੇਤਾ ਹੋ ਜਾਂ ਖਰੀਦਦਾਰ?',
     roleSpoken: 'ਧੰਨਵਾਦ! ਕਿਰਪਾ ਕਰਕੇ ਆਪਣਾ ਨਾਮ ਜਾਂ ਰਜਿਸਟਰਡ ਮੋਬਾਈਲ ਨੰਬਰ ਦੱਸੋ।',
-    confirmSpoken: (name, role) =>
-      `ਠੀਕ ਹੈ, ${name}! ਤੁਸੀਂ ${role === 'Seller' ? 'ਵਿਕਰੇਤਾ' : 'ਖਰੀਦਦਾਰ'} ਵਜੋਂ ਲੌਗ ਇਨ ਹੋ ਗਏ ਹੋ। ਚੱਲੋ, ਸ਼ੁਰੂ ਕਰੀਏ।`,
+    addressSpoken: 'ਧੰਨਵਾਦ! ਤੁਹਾਡਾ ਪਿੰਡ, ਸ਼ਹਿਰ ਜਾਂ ਵਰਕਸ਼ਾਪ ਦਾ ਪਤਾ ਕੀ ਹੈ?',
+    confirmSpoken: (name, role, address) =>
+      `ਠੀਕ ਹੈ, ${name}! ${address ? address + ' ਤੋਂ, ' : ''}ਤੁਸੀਂ ${role === 'Seller' ? 'ਵਿਕਰੇਤਾ' : 'ਖਰੀਦਦਾਰ'} ਵਜੋਂ ਲੌਗ ਇਨ ਹੋ ਗਏ ਹੋ। ਚੱਲੋ, ਸ਼ੁਰੂ ਕਰੀਏ।`,
     saySeller: 'ਕਹੋ: "ਵਿਕਰੇਤਾ" (Seller)',
     sayBuyer: 'ਕਹੋ: "ਖਰੀਦਦਾਰ" (Buyer)',
     sayName: 'ਕਹੋ: ਰਾਮਵਤੀ ਦੇਵੀ',
     sayPhone: 'ਕਹੋ: 9876543210',
+    sayAddress: 'ਕਹੋ: "ਅੰਮ੍ਰਿਤਸਰ, ਪੰਜਾਬ"',
     stepRole: 'ਭੂਮਿਕਾ',
     stepIdentity: 'ਪਛਾਣ',
+    stepAddress: 'ਪਤਾ',
     stepLogin: 'ਲੌਗਇਨ',
     listening: 'ਤੁਹਾਡੀ ਆਵਾਜ਼ ਸੁਣੀ ਜਾ ਰਹੀ ਹੈ...',
     speaking: 'ਸਹਾਇਕ ਬੋਲ ਰਿਹਾ ਹੈ...',
@@ -785,14 +818,17 @@ export const AUTH_STRINGS: Record<SupportedLanguageCode, AuthStrings> = {
   en: {
     welcomeSpoken: 'Welcome! Are you joining us today as a Seller or a Buyer?',
     roleSpoken: 'Thank you. Please tell me your name or registered phone number.',
-    confirmSpoken: (name, role) =>
-      `Got it, logging you in as ${name}, as a ${role}. Let's get started.`,
+    addressSpoken: 'Thank you. What is your village, city or workshop address?',
+    confirmSpoken: (name, role, address) =>
+      `Got it, ${name}! ${address ? 'From ' + address + ', ' : ''}logged in as a ${role}. Let's get started.`,
     saySeller: 'Say: "Seller" (कारीगर)',
     sayBuyer: 'Say: "Buyer" (खरीदार)',
     sayName: 'Say: "Ramvati Devi"',
     sayPhone: 'Say: "9876543210"',
+    sayAddress: 'Say: "Gorakhpur, Uttar Pradesh"',
     stepRole: 'Role',
     stepIdentity: 'Identity',
+    stepAddress: 'Address',
     stepLogin: 'Login',
     listening: 'Listening to your voice...',
     speaking: 'Assistant Speaking...',

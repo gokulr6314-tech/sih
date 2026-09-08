@@ -302,7 +302,7 @@ export default function VoiceListingAssistant({
         computePricingIntelligence(proposed).then(() => {
           goToStep('pricing');
           speakWithAutoListen(
-            buildPricingPrompt(languageRef.current, draftRef.current, pricingRef.current),
+            getTurnPrompt('pricing', languageRef.current, { product: draftRef.current.productName || 'product' }),
             900
           );
         });
@@ -753,20 +753,81 @@ export default function VoiceListingAssistant({
                   ))}
                 </div>
 
-                <div className="flex flex-wrap gap-2">
-                  {[pricing.competitiveTarget, pricing.marketMedian, pricing.marketHigh].map((opt) => (
+                {/* Direct Price Input + Market Suggestions */}
+                <div className="rounded-2xl border border-emerald-500/30 bg-black/40 p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-emerald-200">
+                      Your Desired Price / आपकी कीमत
+                    </label>
+                    <span className="text-[10px] text-white/50">Speak or enter amount</span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <div className="relative flex-1">
+                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-emerald-400 font-bold text-base">₹</span>
+                      <input
+                        type="number"
+                        min="50"
+                        step="10"
+                        value={draft.askedPrice > 0 ? draft.askedPrice : ''}
+                        onChange={(e) => {
+                          const val = Number(e.target.value);
+                          setDraftPartial({ askedPrice: val });
+                          if (val >= 50) {
+                            computePricingIntelligence(val);
+                          }
+                        }}
+                        placeholder="e.g. 850"
+                        className="w-full pl-8 pr-4 py-2.5 bg-white/10 rounded-xl text-white font-black text-lg border border-white/20 focus:border-emerald-400 focus:outline-none"
+                      />
+                    </div>
                     <button
-                      key={opt}
+                      type="button"
                       onClick={() => {
-                        setDraftPartial({ askedPrice: opt });
+                        const finalPrice = draft.askedPrice > 0 ? draft.askedPrice : pricing.competitiveTarget;
+                        setDraftPartial({ askedPrice: finalPrice });
                         haltMic();
-                        computePricingIntelligence(opt).then(() => advanceTo('review'));
+                        computePricingIntelligence(finalPrice).then(() => advanceTo('review'));
                       }}
-                      className="rounded-full border border-emerald-400/40 bg-emerald-400/10 hover:bg-emerald-400/20 px-3.5 py-1.5 text-xs font-bold"
+                      className="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-[#11241a] px-4 py-3 rounded-xl font-extrabold text-xs tracking-wide shadow-lg shadow-emerald-950/40 transition-all cursor-pointer whitespace-nowrap"
                     >
-                      ₹{opt}
+                      Confirm Price ➔
                     </button>
-                  ))}
+                  </div>
+
+                  {/* Suggestions Row */}
+                  <div className="pt-1">
+                    <p className="text-[11px] font-semibold text-emerald-300/80 mb-2">
+                      💡 Market Suggestions (Tap to pick):
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {[
+                        { label: 'Floor', price: pricing.floorPrice },
+                        { label: 'Target', price: pricing.competitiveTarget, highlight: true },
+                        { label: 'Median', price: pricing.marketMedian },
+                        { label: 'Premium', price: pricing.marketHigh },
+                      ].map((item) => (
+                        <button
+                          key={item.label}
+                          type="button"
+                          onClick={() => {
+                            setDraftPartial({ askedPrice: item.price });
+                            computePricingIntelligence(item.price);
+                          }}
+                          className={`rounded-full px-3 py-1.5 text-xs font-bold transition-all border cursor-pointer ${
+                            draft.askedPrice === item.price
+                              ? 'bg-emerald-400 text-[#11241a] border-emerald-400 shadow-md shadow-emerald-400/30'
+                              : item.highlight
+                              ? 'bg-emerald-500/20 text-emerald-200 border-emerald-400/50 hover:bg-emerald-500/30'
+                              : 'bg-white/5 text-emerald-100/70 border-white/10 hover:bg-white/15'
+                          }`}
+                        >
+                          <span className="opacity-75 mr-1">{item.label}:</span>
+                          <span>₹{item.price}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </>
             ) : (

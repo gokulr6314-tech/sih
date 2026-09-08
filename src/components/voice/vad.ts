@@ -70,8 +70,14 @@ export function useVoiceActivityDetector(options: UseVadOptions): VoiceActivityC
     }
   }, []);
 
-  /** Energy-based speaking detection — keeps the orb/mic faithful to reality. */
+  /** Energy-based speaking detection — keeps the orb/mic faithful to reality without blocking mobile mic */
   const attachAnalyser = useCallback(async () => {
+    // On mobile devices, opening an exclusive getUserMedia audio stream prevents
+    // SpeechRecognition from accessing the hardware mic. We safely skip it on mobile.
+    const isMobile = typeof navigator !== 'undefined' && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+    if (isMobile) {
+      return;
+    }
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       micStreamRef.current = stream;

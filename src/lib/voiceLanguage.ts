@@ -109,22 +109,43 @@ export function resolveVoice(
   const targetLocale = langConfig ? langConfig.speechLocale : 'en-IN';
   const base = targetLocale.split('-')[0];
 
-  // 1. Exact regional match — most authentic voice e.g. "hi-IN"
-  const exact = allVoices.find((v) => v.lang.toLowerCase() === targetLocale.toLowerCase());
+  // 1. Exact regional match — most authentic voice e.g. "hi-IN", "ta-IN"
+  const normalizedTarget = targetLocale.toLowerCase().replace('_', '-');
+  const exact = allVoices.find((v) => v.lang.toLowerCase().replace('_', '-') === normalizedTarget);
   if (exact) return { voice: exact, locale: targetLocale, matched: true, isFallback: false };
 
-  // 2. Base language match — e.g. any "hi" voice
-  const baseMatch = allVoices.find((v) => v.lang.toLowerCase().startsWith(`${base}-`));
+  // 2. Base language match or voice name contains language name (e.g. "Hindi", "Tamil", "hi")
+  const langName = langConfig?.name.toLowerCase() || '';
+  const baseMatch = allVoices.find(
+    (v) =>
+      v.lang.toLowerCase().startsWith(`${base}-`) ||
+      v.lang.toLowerCase() === base ||
+      (langName && v.name.toLowerCase().includes(langName))
+  );
   if (baseMatch) return { voice: baseMatch, locale: baseMatch.lang, matched: true, isFallback: false };
 
-  // 3. Fallback respecting language integrity:
-  //    For native-language targets we NEVER force a mismatched English voice —
-  //    that would read Hindi/Tamil/etc. text back in an English accent. Instead
-  //    we return no voice so the TTS engine auto-selects from utterance.lang.
-  //    English text is the only case where a generic English voice is assigned.
-  if (base === 'en') {
-    const en = allVoices.find((v) => v.lang.toLowerCase().startsWith('en'));
-    if (en) return { voice: en, locale: en.lang, matched: true, isFallback: false };
+  // 3. Indian English / Indian accent voice match (e.g. en-IN, Google हिन्दी, Microsoft Heera/Ravi)
+  const indianVoice = allVoices.find(
+    (v) =>
+      v.lang.toLowerCase().includes('in') ||
+      v.name.toLowerCase().includes('india') ||
+      v.name.toLowerCase().includes('heera') ||
+      v.name.toLowerCase().includes('ravi')
+  );
+  if (indianVoice) {
+    return { voice: indianVoice, locale: indianVoice.lang, matched: false, isFallback: true, fallbackReason: 'no_native' };
+  }
+
+  // 4. Any English or default system voice (guarantees desktop narration NEVER fails or stays silent)
+  const defaultVoice = allVoices.find((v) => v.default) || allVoices.find((v) => v.lang.toLowerCase().startsWith('en')) || allVoices[0];
+  if (defaultVoice) {
+    return {
+      voice: defaultVoice,
+      locale: defaultVoice.lang || 'en-US',
+      matched: false,
+      isFallback: true,
+      fallbackReason: 'generic',
+    };
   }
 
   return { voice: null, locale: targetLocale, matched: false, isFallback: true, fallbackReason: 'no_native' };

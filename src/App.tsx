@@ -114,12 +114,14 @@ export default function App() {
 
   // Handle successful voice authentication
   const handleVoiceAuthentication = (session: AuthSession) => {
+    SpeechService.unlockAudio();
     setAuthSession(session);
     setIsAuthenticated(true);
     if (session.identifier) {
       setArtisan((prev) => ({
         ...prev,
         name: session.identifier,
+        village: session.address || prev.village,
       }));
     }
   };
