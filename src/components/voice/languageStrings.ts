@@ -1,0 +1,808 @@
+/**
+ * Module 2 — Voice Listing Assistant language bank
+ * Interview prompts + UI copy in all 11 supported languages.
+ * State persists across mid-interview language switching: prompts
+ * re-render in the new language while the in-progress draft stays intact.
+ */
+
+import { SupportedLanguageCode } from '../../types';
+
+export type ListingTurn =
+  | 'intro'
+  | 'product'
+  | 'materials'
+  | 'camera'
+  | 'pricing'
+  | 'review'
+  | 'published';
+
+export interface TurnVars {
+  name?: string;
+  product?: string;
+  price?: string;
+  target?: string;
+  median?: string;
+}
+
+export const TURN_PROMPTS: Record<SupportedLanguageCode, Record<ListingTurn, string>> = {
+  hi: {
+    intro: 'नमस्ते {name} जी! मैं आपकी बोली भाषा में आपको उत्पाद सूचीबद्ध करवाऊँगा। चलिए शुरू करते हैं।',
+    product: 'कृपया अपने शब्दों में अपने उत्पाद का नाम और वह क्या है, बताइए।',
+    materials: 'ठीक है, {product}। आपने कौन-सी सामग्री इस्तेमाल की और इसे कैसे बनाया?',
+    camera: 'बहुत बढ़िया! अब अपना उत्पाद कैमरे के सामने रखें। जब फोटो बिल्कुल सही लगे तो हरा बटन दबाएँ। पृष्ठभूमि मैं अपने आप साफ़ कर दूँगी।',
+    pricing: 'बाजार तुलना यहाँ है। इस शिल्प की उचित कीमत लगभग {target} रुपये है। आपने {price} रुपये बताया था। क्या हम {target} रुपये पर सहमत हों? नई रकम बोलिए या "फिर सुनाइए" कहिए।',
+    review: 'सब तैयार है! शीर्षक: {product}। SEO और उचित कीमत सेट हो गई है। क्या मैं इसे खरीदारों की दुकान पर प्रकाशित करूँ?',
+    published: 'प्रकाशित हो गया! आपका उत्पाद अब बाजार में लाइव है। धन्यवाद, {name} जी!',
+  },
+  ta: {
+    intro: 'வணக்கம் {name} ஜி! உங்கள் மொழியிலேயே உங்கள் பொருளைப் பட்டியலிட உதவுகிறேன். ஆரம்பிப்போம்.',
+    product: 'உங்கள் வார்த்தைகளில் உங்கள் பொருளின் பெயரும் அது என்னவென்றும் சொல்லுங்கள்.',
+    materials: 'சரி, {product}. எந்த பொருட்களைப் பயன்படுத்தினீர்கள், எப்படி உருவாக்கினீர்கள்?',
+    camera: 'அருமை! இப்போது உங்கள் பொருளைக் கேமராவின் முன் வைக்கவும். படம் சரியாகத் தோன்றும்போது பச்சை பொத்தானை அழுத்தவும். பின்னணியை நான் தானாகவே சுத்தம் செய்வேன்.',
+    pricing: 'சந்தை ஒப்பீடு இங்கே. இந்த கைவினைப்பொருளின் நியாயமான விலை சுமார் {target} ரூபாய். நீங்கள் {price} ரூபாய் சொன்னீர்கள். {target} ரூபாய் சரிபார்க்கலாமா? புதிய தொகையைச் சொல்லுங்கள் அல்லது “மீண்டும் சொல்” என்று சொல்லுங்கள்.',
+    review: 'எல்லாம் தயார்! தலைப்பு: {product}. SEO மற்றும் நியாயமான விலை அமைக்கப்பட்டது. வாங்குபவர் கடையில் வெளியிடட்டுமா?',
+    published: 'வெளியிடப்பட்டது! உங்கள் பொருள் இப்போது சந்தையில் நேரடியாக உள்ளது. நன்றி, {name} ஜி!',
+  },
+  te: {
+    intro: 'నమస్కారం {name} గారూ! మీ భాషలోనే మీ వస్తువును జాబితా చేయడానికి సహాయం చేస్తాను. మొదలుపెడదాం.',
+    product: 'మీ స్వంత మాటల్లో మీ ఉత్పత్తి పేరు మరియు అది ఏమిటో చెప్పండి.',
+    materials: 'సరే, {product}. మీరు ఏ పదార్థాలు ఉపయోగించారు, ఎలా తయారు చేశారు?',
+    camera: 'చాలా బాగుంది! ఇప్పుడు మీ ఉత్పత్తిని కెమెరా ముందు ఉంచండి. ఫోటో పర్ఫెక్ట్గా ఉన్నప్పుడు ఆకుపచ్చ బటన్ నొక్కండి. నేపథ్యాన్ని నేను స్వయంచాలకంగా శుభ్రం చేస్తాను.',
+    pricing: 'మార్కెట్ పోలిక ఇక్కడ ఉంది. ఈ హస్తకళకు సరసమైన ధర దాదాపు {target} రూపాయలు. మీరు {price} రూపాయలు చెప్పారు. {target} రూపాయలకు అంగీకరిస్తామా? కొత్త మొత్తం చెప్పండి లేదా “మళ్ళీ చెప్పండి” అనండి.',
+    review: 'అంతా సిద్ధం! టైటిల్: {product}. SEO మరియు సరసమైన ధర సెట్ చేయబడ్డాయి. కొనుగోలుదారుల దుకాణంలో ప్రచురించాలా?',
+    published: 'ప్రచురించబడింది! మీ ఉత్పత్తి ఇప్పుడు మార్కెట్లో లైవ్లో ఉంది. ధన్యవాదాలు, {name} గారూ!',
+  },
+  bn: {
+    intro: 'নমস্কার {name} জি! আমি আপনার ভাষাতেই আপনার পণ্য তালিকাভুক্ত করে দেব। শুরু করা যাক।',
+    product: 'অনুগ্রহ করে আপনার নিজের ভাষায় পণ্যের নাম এবং এটি কী তা বলুন।',
+    materials: 'ঠিক আছে, {product}। আপনি কোন উপকরণ ব্যবহার করেছেন এবং কীভাবে তৈরি করেছেন?',
+    camera: 'দারুণ! এখন আপনার পণ্যটি ক্যামেরার সামনে রাখুন। ছবি নিখুঁত লাগলে সবুজ বাটন চাপুন। আমি ব্যাকগ্রাউন্ড নিজে থেকেই পরিষ্কার করে দেব।',
+    pricing: 'বাজার তুলনা এখানে। এই নৈপুণ্যের ন্যায্য দাম প্রায় {target} টাকা। আপনি {price} টাকা বলেছিলেন। আমরা কি {target} টাকায় রাজি হব? নতুন পরিমাণ বলুন বা “আবার বলুন” বলুন।',
+    review: 'সব প্রস্তুত! শিরোনাম: {product}। এসইও এবং ন্যায্য দাম ঠিক হয়েছে। ক্রেতার দোকানে প্রকাশ করব কি?',
+    published: 'প্রকাশিত হয়েছে! আপনার পণ্য এখন বাজারে লাইভ। ধন্যবাদ, {name} জি!',
+  },
+  mr: {
+    intro: 'नमस्कार {name} जी! मी तुमच्या भाषेतच तुमचा उत्पादन यादीत टाकतो/टाकते. चला सुरुवात करूया.',
+    product: 'कृपया तुमच्या शब्दांत तुमच्या उत्पादनाचे नाव आणि ते काय आहे ते सांगा.',
+    materials: 'ठीक आहे, {product}. तुम्ही कोणत्या सामग्री वापरल्या आणि ते कसे बनवले?',
+    camera: 'छान! आता तुमचे उत्पादन कॅमेर्यासमोर ठेवा. फोटो अगदी योग्य दिसल्यावर हिरवा बटण दाबा. पार्श्वभूमी मी आपोआप स्वच्छ करेन.',
+    pricing: 'बाजार तुलना येथे आहे. या हस्तकलेची योग्य किंमत सुमारे {target} रुपये आहे. तुम्ही {price} रुपये सांगितले होते. आपण {target} रुपयांवर सहमत होऊ का? नवीन रक्कम बोला किंवा “पुन्हा सांगा” म्हणा.',
+    review: 'सर्व तयार आहे! शीर्षक: {product}. SEO आणि योग्य किंमत सेट झाली आहे. खरेदीदारांच्या दुकानात प्रकाशित करू का?',
+    published: 'प्रकाशित झाले! तुमचे उत्पादन आता बाजारात लाइव्ह आहे. धन्यवाद, {name} जी!',
+  },
+  gu: {
+    intro: 'નમસ્તે {name} જી! હું તમારી ભાષામાં જ તમારા ઉત્પાદનને યાદી થવા મદદ કરીશ. ચાલો શરૂ કરીએ.',
+    product: 'કૃપા કરીને તમારા શબ્દોમાં તમારા ઉત્પાદનનું નામ અને તે શું છે તે કહો.',
+    materials: 'ઠીક છે, {product}. તમે કઈ સામગ્રી વાપરી અને કેવી રીતે બનાવ્યું?',
+    camera: 'ઉત્તમ! હવે તમારા ઉત્પાદનને કૅમેરા સામે મૂકો. ફોટો બરાબર લાગે ત્યારે લીલું બટન દબાવો. પૃષ્ઠભૂમિ હું આપમેળે સાફ કરીશ.',
+    pricing: 'બજાર સરખામણી અહીં છે. આ હસ્તકલાની યોગ્ય કિંમત આશરે {target} રૂપિયા છે. તમે {price} રૂપિયા કહ્યા હતા. શું આપણે {target} રૂપિયા સ્વીકારીએ? નવી રકમ બોલો અથવા “ફરી કહો” કહો.',
+    review: 'બધું તૈયાર છે! શીર્ષક: {product}. SEO અને યોગ્ય ભાવ સેટ થઈ ગયા છે. ખરીદનારની દુકાનમાં પ્રકાશિત કરું?',
+    published: 'પ્રકાશિત થઈ ગયું! તમારું ઉત્પાદન હવે બજારમાં લાઇવ છે. આભાર, {name} જી!',
+  },
+  kn: {
+    intro: 'ನಮಸ್ಕಾರ {name} ಜಿ! ನಿಮ್ಮ ಭಾಷೆಯಲ್ಲಿಯೇ ನಿಮ್ಮ ವಸ್ತುವನ್ನು ಪಟ್ಟಿ ಮಾಡಲು ಸಹಾಯ ಮಾಡುತ್ತೇನೆ. ಆರಂಭಿಸೋಣ.',
+    product: 'ದಯವಿಟ್ಟು ನಿಮ್ಮ ಸ್ವಂತ ಮಾತುಗಳಲ್ಲಿ ಉತ್ಪನ್ನದ ಹೆಸರು ಮತ್ತು ಅದು ಏನೆಂದು ಹೇಳಿ.',
+    materials: 'ಸರಿ, {product}. ನೀವು ಯಾವ ವಸ್ತುಗಳನ್ನು ಬಳಸಿದಿರಿ, ಹೇಗೆ ಮಾಡಿದಿರಿ?',
+    camera: 'ಉತ್ತಮ! ಈಗ ನಿಮ್ಮ ಉತ್ಪನ್ನವನ್ನು ಕ್ಯಾಮೆರಾ ಮುಂದೆ ಇರಿಸಿ. ಫೋಟೋ ಸರಿಯಾಗಿ ಕಂಡಾಗ ಹಸಿರು ಗುಂಡಿ ಒತ್ತಿ. ಹಿನ್ನೆಲೆಯನ್ನು ನಾನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಸ್ವಚ್ಛಗೊಳಿಸುತ್ತೇನೆ.',
+    pricing: 'ಮಾರುಕಟ್ಟೆ ಹೋಲಿಕೆ ಇಲ್ಲಿದೆ. ಈ ಕರಕುಶಲದ ನ್ಯಾಯಯುತ ಬೆಲೆ ಸುಮಾರು {target} ರೂಪಾಯಿ. ನೀವು {price} ರೂಪಾಯಿ ಹೇಳಿದ್ದೀರಿ. {target} ರೂಪಾಯಿಗೆ ಒಪ್ಪುತ್ತೇವೆಯೇ? ಹೊಸ ಮೊತ್ತ ಹೇಳಿ ಅಥವಾ “ಮತ್ತೆ ಹೇಳಿ” ಎಂದು ಹೇಳಿ.',
+    review: 'ಎಲ್ಲಾ ಸಿದ್ಧ! ಶೀರ್ಷಿಕೆ: {product}. SEO ಮತ್ತು ನ್ಯಾಯಯುತ ಬೆಲೆ ಹೊಂದಿಸಲಾಗಿದೆ. ಖರೀದಿದಾರರ ಅಂಗಡಿಯಲ್ಲಿ ಪ್ರಕಟಿಸಲೇ?',
+    published: 'ಪ್ರಕಟಿಸಲಾಗಿದೆ! ನಿಮ್ಮ ಉತ್ಪನ್ನ ಈಗ ಮಾರುಕಟ್ಟೆಯಲ್ಲಿ ಲೈವ್ ಆಗಿದೆ. ಧನ್ಯವಾದಗಳು, {name} ಜಿ!',
+  },
+  ml: {
+    intro: 'നമസ്കാരം {name} ജി! നിങ്ങളുടെ ഭാഷയിൽത്തന്നെ നിങ്ങളുടെ ഉൽപ്പന്നം ലിസ്റ്റ് ചെയ്യാൻ സഹായിക്കും. തുടങ്ങാം.',
+    product: 'നിങ്ങളുടെ വാക്കുകളിൽ ഉൽപ്പന്നത്തിന്റെ പേരും അത് എന്താണെന്നും പറയൂ.',
+    materials: 'ശരി, {product}. ഏത് സാമഗ്രികളാണ് ഉപയോഗിച്ചത്, എങ്ങനെ ഉണ്ടാക്കി?',
+    camera: 'കൊള്ളാം! ഇപ്പോൾ നിങ്ങളുടെ ഉൽപ്പന്നം ക്യാമറയ്ക്ക് മുന്നിൽ വയ്ക്കുക. ഫോട്ടോ കൃത്യമായി തോന്നുമ്പോൾ പച്ച ബട്ടൺ അമർത്തുക. പശ്ചാത്തലം ഞാൻ സ്വയം വൃത്തിയാക്കും.',
+    pricing: 'വിപണി താരതമ്യം ഇതാ. ഈ കരകൗശലത്തിന്റെ ന്യായമായ വില ഏകദേശം {target} രൂപയാണ്. നിങ്ങൾ {price} രൂപ പറഞ്ഞു. {target} രൂപയ്ക്ക് സമ്മതിക്കാമോ? പുതിയ തുക പറയുക അല്ലെങ്കിൽ “വീണ്ടും പറയൂ” എന്ന് പറയുക.',
+    review: 'എല്ലാം തയ്യാറാണ്! തലക്കെട്ട്: {product}. SEO-യും ന്യായമായ വിലയും സജ്ജമാണ്. വാങ്ങുന്നവരുടെ കടയിൽ പ്രസിദ്ധീകരിക്കട്ടെ?',
+    published: 'പ്രസിദ്ധീകരിച്ചു! നിങ്ങളുടെ ഉൽപ്പന്നം ഇപ്പോൾ മാർക്കറ്റിൽ ലൈവ് ആണ്. നന്ദി, {name} ജി!',
+  },
+  or: {
+    intro: 'ନମସ୍କାର {name} ଜୀ! ମୁଁ ଆପଣଙ୍କ ଭାଷାରେ ଆପଣଙ୍କ ଉତ୍ପାଦ ତାଲିକା କରିବାରେ ସାହାଯ୍ୟ କରିବି। ଆରମ୍ଭ କରିବା।',
+    product: 'ଦୟାକରି ଆପଣଙ୍କ ମନର କଥାରେ ଉତ୍ପାଦର ନାମ ଓ ତାହା କଣ ବୋଲି କୁହନ୍ତୁ।',
+    materials: 'ଠିକ ଅଛି, {product}। ଆପଣ କେଉଁ ସାମଗ୍ରୀ ବ୍ୟବହାର କଲେ ଏବଂ କିପରି ତିଆରି କଲେ?',
+    camera: 'ବହୁତ ଭଲ! ଏବେ ଆପଣଙ୍କ ଉତ୍ପାଦକୁ କ୍ୟାମେରା ସାମ୍ନାରେ ରଖନ୍ତୁ। ଫଟୋ ସଠିକ୍ ଦେଖାଗଲେ ସବୁଜ ବଟନ୍ ଦବାନ୍ତୁ। ମୁଁ ପୃଷ୍ଠଭୂମିକୁ ନିଜେ ସଫା କରିବି।',
+    pricing: 'ବଜାର ତୁଳନା ଏଠାରେ ଅଛି। ଏହି କାରିଗରୀର ଉଚିତ ମୂଲ୍ୟ ପ୍ରାୟ {target} ଟଙ୍କା। ଆପଣ {price} ଟଙ୍କା କହିଥିଲେ। ଆମେ {target} ଟଙ୍କାରେ ରାଜି ହେବା? ନୂଆ ରାଶି କୁହନ୍ତୁ କିମ୍ବା “ଆଉ ଥରେ କୁହନ୍ତୁ”।',
+    review: 'ସବୁ ପ୍ରସ୍ତୁତ! ଶୀର୍ଷକ: {product}। SEO ଏବଂ ଉଚିତ ମୂଲ୍ୟ ସେଟ୍ ହୋଇଛି। କ୍ରେତା ଦୋକାନରେ ପ୍ରକାଶ କରିବି?',
+    published: 'ପ୍ରକାଶିତ ହେଲା! ଆପଣଙ୍କ ଉତ୍ପାଦ ବଜାରରେ ଲାଇଭ୍ ଅଛି। ଧନ୍ୟବାଦ, {name} ଜୀ!',
+  },
+  pa: {
+    intro: 'ਨਮਸਤੇ {name} ਜੀ! ਮੈਂ ਤੁਹਾਡੀ ਭਾਸ਼ਾ ਵਿੱਚ ਹੀ ਤੁਹਾਡੇ ਉਤਪਾਦ ਦੀ ਸੂਚੀ ਬਣਾਵਾਂਗਾ। ਚੱਲੋ ਸ਼ੁਰੂ ਕਰੀਏ।',
+    product: 'ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੇ ਸ਼ਬਦਾਂ ਵਿੱਚ ਆਪਣੇ ਉਤਪਾਦ ਦਾ ਨਾਮ ਅਤੇ ਇਹ ਕੀ ਹੈ ਦੱਸੋ।',
+    materials: 'ਠੀਕ ਹੈ, {product}। ਤੁਸੀਂ ਕਿਹੜੀਆਂ ਸਮੱਗਰੀਆਂ ਵਰਤੀਆਂ ਅਤੇ ਕਿਵੇਂ ਬਣਾਇਆ?',
+    camera: 'ਬਹੁਤ ਵਧੀਆ! ਹੁਣ ਆਪਣੇ ਉਤਪਾਦ ਨੂੰ ਕੈਮਰੇ ਅੱਗੇ ਰੱਖੋ। ਜਦੋਂ ਫੋਟੋ ਬਿਲਕੁਲ ਸਹੀ ਲੱਗੇ ਤਾਂ ਹਰਾ ਬਟਨ ਦਬਾਓ। ਪਿਛੋਕੜ ਮੈਂ ਆਪੇ ਸਾਫ਼ ਕਰ ਦਿਆਂਗਾ।',
+    pricing: 'ਬਾਜ਼ਾਰ ਤੁਲਨਾ ਇੱਥੇ ਹੈ। ਇਸ ਕਲਾ ਦੀ ਉਚਿਤ ਕੀਮਤ ਲਗਭਗ {target} ਰੁਪਏ ਹੈ। ਤੁਸੀਂ {price} ਰੁਪਏ ਦੱਸੇ ਸਨ। ਕੀ ਅਸੀਂ {target} ਰੁਪਏ ਮੰਨੀਏ? ਨਵੀਂ ਰਕਮ ਬੋਲੋ ਜਾਂ "ਫਿਰ ਦੱਸੋ" ਕਹੋ।',
+    review: 'ਸਭ ਤਿਆਰ ਹੈ! ਸਿਰਲੇਖ: {product}। SEO ਅਤੇ ਉਚਿਤ ਕੀਮਤ ਸੈੱਟ ਹੋ ਗਈ ਹੈ। ਕੀ ਮੈਂ ਇਸਨੂੰ ਖਰੀਦਦਾਰਾਂ ਦੀ ਦੁਕਾਨ ਵਿੱਚ ਪ੍ਰਕਾਸ਼ਿਤ ਕਰਾਂ?',
+    published: 'ਪ੍ਰਕਾਸ਼ਿਤ ਹੋ ਗਿਆ! ਤੁਹਾਡਾ ਉਤਪਾਦ ਹੁਣ ਬਾਜ਼ਾਰ ਵਿੱਚ ਲਾਈਵ ਹੈ। ਧੰਨਵਾਦ, {name} ਜੀ!',
+  },
+  en: {
+    intro: 'Welcome {name} ji! I will help you list your product in your own language. Let us begin.',
+    product: 'Please tell me your product name and what it is, in your own words.',
+    materials: 'Sure, {product}. Which materials did you use, and how did you craft it?',
+    camera: 'Excellent! Now place your product in front of the camera. Press the green button when the photo looks perfect. I will clean the background automatically.',
+    pricing: 'Here is the market comparison. The fair price for this craft is around {target} rupees. You suggested {price}. Shall we agree on {target}? Say a new amount, or say "repeat".',
+    review: 'Everything is ready! Title: {product}. SEO and fair pricing are set. Shall I publish it to the buyer marketplace?',
+    published: 'Published successfully! Your product is now live in the marketplace. Thank you, {name} ji!',
+  },
+};
+
+export function getTurnPrompt(
+  turn: ListingTurn,
+  language: SupportedLanguageCode,
+  vars: TurnVars = {}
+): string {
+  let prompt = TURN_PROMPTS[language]?.[turn] || TURN_PROMPTS.en[turn];
+  (Object.keys(vars) as (keyof TurnVars)[]).forEach((key) => {
+    const value = vars[key] || '';
+    prompt = prompt.replace(new RegExp(`\\{${key}\\}`, 'g'), value);
+  });
+  return prompt;
+}
+
+export interface AssistantUiStrings {
+  title: string;
+  subtitle: string;
+  start: string;
+  listening: string;
+  speaking: string;
+  justSaid: string;
+  productName: string;
+  category: string;
+  materials: string;
+  technique: string;
+  region: string;
+  continueCta: string;
+  useCamera: string;
+  retake: string;
+  pricingTitle: string;
+  floorLabel: string;
+  medianLabel: string;
+  targetLabel: string;
+  platformCompare: string;
+  anomalyWarning: string;
+  anomalyFixPlay: string;
+  reviewTitle: string;
+  reviewSubtitle: string;
+  publish: string;
+  publishedTitle: string;
+  publishedBody: string;
+  viewInStore: string;
+  repeatHint: string;
+  close: string;
+  privacyNote: string;
+  fallbackCamera: string;
+}
+
+export const ASSISTANT_UI: Record<SupportedLanguageCode, AssistantUiStrings> = {
+  hi: {
+    title: 'वॉइस लिस्टिंग असिस्टेंट',
+    subtitle: 'बोलकर अपना उत्पाद बनाएँ — फोटो, SEO और कीमत सब अपने आप तैयार।',
+    start: 'वॉइस लिस्टिंग शुरू करें',
+    listening: 'सुन रहा हूँ…',
+    speaking: 'बोल रहा हूँ…',
+    justSaid: 'आपने कहा:',
+    productName: 'उत्पाद नाम',
+    category: 'श्रेणी',
+    materials: 'सामग्री',
+    technique: 'निर्माण विधि',
+    region: 'क्षेत्र',
+    continueCta: 'आगे बढ़ें',
+    useCamera: 'कैमरा उपयोग करें',
+    retake: 'फिर से लें',
+    pricingTitle: 'उचित बाजार मूल्य',
+    floorLabel: 'न्यूनतम (सामग्री + श्रम)',
+    medianLabel: 'बाजार मध्यमान',
+    targetLabel: 'प्रतिस्पर्धी लक्ष्य',
+    platformCompare: 'लाइव प्लेटफ़ॉर्म तुलना',
+    anomalyWarning: 'आपकी कीमत बाजार मध्यमान से 40%+ नीचे है।',
+    anomalyFixPlay: 'अनुशंसित कीमत खेलें',
+    reviewTitle: 'लिस्टिंग पूर्वावलोकन',
+    reviewSubtitle: 'एआई-तैयार SEO विवरण, फोटो और मूल्य।',
+    publish: 'लिस्टिंग प्रकाशित करें',
+    publishedTitle: 'प्रकाशित!',
+    publishedBody: 'आपका उत्पाद अब मार्केटप्लेस में लाइव है।',
+    viewInStore: 'स्टोर में देखें',
+    repeatHint: '"फिर सुनाइए" या नई रकम बोलें',
+    close: 'बंद करें',
+    privacyNote: 'फोटो और ऑडियो आपकी अनुमति के बिना डिवाइस नहीं छोड़ते।',
+    fallbackCamera: 'कैमरा विकल्प',
+  },
+  ta: {
+    title: 'குரல் பட்டியல் உதவியாளர்',
+    subtitle: 'பேசுவதன் மூலம் உங்கள் தயாரிப்பை உருவாக்குங்கள் — புகைப்படம், SEO, விலை எல்லாம் தானாக.',
+    start: 'குரல் பட்டியலைத் தொடங்கு',
+    listening: 'கேட்கிறேன்…',
+    speaking: 'பேசுகிறேன்…',
+    justSaid: 'நீங்கள் சொன்னீர்கள்:',
+    productName: 'தயாரிப்பு பெயர்',
+    category: 'வகை',
+    materials: 'பொருட்கள்',
+    technique: 'நுட்பம்',
+    region: 'பகுதி',
+    continueCta: 'தொடருங்கள்',
+    useCamera: 'கேமராவைப் பயன்படுத்தவும்',
+    retake: 'மீண்டும் எடு',
+    pricingTitle: 'நியாயமான சந்தை விலை',
+    floorLabel: 'குறைந்தபட்சம் (பொருள் + உழைப்பு)',
+    medianLabel: 'சந்தை இடைநிலை',
+    targetLabel: 'போட்டி இலக்கு',
+    platformCompare: 'நேரடி தள ஒப்பீடு',
+    anomalyWarning: 'உங்கள் விலை சந்தை இடைநிலையை விட 40%+ குறைவு.',
+    anomalyFixPlay: 'பரிந்துரைக்கப்பட்ட விலையைக் கேளுங்கள்',
+    reviewTitle: 'பட்டியல் முன்னோட்டம்',
+    reviewSubtitle: 'AI-தயார் SEO விளக்கம், புகைப்படம் & விலை.',
+    publish: 'பட்டியலை வெளியிடு',
+    publishedTitle: 'வெளியிடப்பட்டது!',
+    publishedBody: 'உங்கள் தயாரிப்பு இப்போது சந்தையில் நேரடி.',
+    viewInStore: 'கடையில் காண்க',
+    repeatHint: '“மீண்டும் சொல்” அல்லது புதிய தொகை',
+    close: 'மூடு',
+    privacyNote: 'புகைப்படம்/ஒலி உங்கள் சம்மதமின்றி சாதனத்தை விட்டு வெளியேறாது.',
+    fallbackCamera: 'கேமரா மாற்று',
+  },
+  te: {
+    title: 'వాయిస్ లిస్టింగ్ అసిస్టెంట్',
+    subtitle: 'మాట్లాడటం ద్వారా మీ ఉత్పత్తిని సృష్టించండి — ఫోటో, SEO, ధర అన్నీ ఆటోమేటిక్.',
+    start: 'వాయిస్ లిస్టింగ్ను ప్రారంభించండి',
+    listening: 'వింటున్నాను…',
+    speaking: 'మాట్లాడుతున్నాను…',
+    justSaid: 'మీరు చెప్పారు:',
+    productName: 'ఉత్పత్తి పేరు',
+    category: 'వర్గం',
+    materials: 'పదార్థాలు',
+    technique: 'సాంకేతికత',
+    region: 'ప్రాంతం',
+    continueCta: 'కొనసాగించండి',
+    useCamera: 'కెమెరాను ఉపయోగించండి',
+    retake: 'తిరిగి తీయండి',
+    pricingTitle: 'సరసమైన మార్కెట్ ధర',
+    floorLabel: 'కనిష్టం (మెటీరియల్ + శ్రమ)',
+    medianLabel: 'మార్కెట్ మధ్యస్థం',
+    targetLabel: 'పోటీ లక్ష్యం',
+    platformCompare: 'లైవ్ ప్లాట్ఫారమ్ పోలిక',
+    anomalyWarning: 'మీ ధర మార్కెట్ మధ్యస్థం కంటే 40%+ తక్కువ.',
+    anomalyFixPlay: 'సిఫార్సు చేసిన ధర వినండి',
+    reviewTitle: 'లిస్టింగ్ ప్రివ్యూ',
+    reviewSubtitle: 'AI-సిద్ధం SEO వివరణ, ఫోటో & ధర.',
+    publish: 'లిస్టింగ్ ప్రచురించండి',
+    publishedTitle: 'ప్రచురించబడింది!',
+    publishedBody: 'మీ ఉత్పత్తి ఇప్పుడు మార్కెట్లో లైవ్.',
+    viewInStore: 'స్టోర్లో చూడండి',
+    repeatHint: '“మళ్ళీ చెప్పండి” లేదా కొత్త మొత్తం',
+    close: 'మూసివేయండి',
+    privacyNote: 'ఫోటో/ఆడియో మీ అనుమతి లేకుండా పరికరాన్ని వదలదు.',
+    fallbackCamera: 'కెమెరా ప్రత్యామ్నాయం',
+  },
+  bn: {
+    title: 'ভয়েস লিস্টিং সহকারী',
+    subtitle: 'বলে আপনার পণ্য তৈরি করুন — ছবি, SEO, দাম সব অটো হয়ে যাবে।',
+    start: 'ভয়েস লিস্টিং শুরু করুন',
+    listening: 'শুনছি…',
+    speaking: 'বলছি…',
+    justSaid: 'আপনি বললেন:',
+    productName: 'পণ্যের নাম',
+    category: 'বিভাগ',
+    materials: 'উপকরণ',
+    technique: 'কৌশল',
+    region: 'অঞ্চল',
+    continueCta: 'এগিয়ে যান',
+    useCamera: 'ক্যামেরা ব্যবহার করুন',
+    retake: 'আবার তুলুন',
+    pricingTitle: 'ন্যায্য বাজারের মূল্য',
+    floorLabel: 'সর্বনিম্ন (উপকরণ + শ্রম)',
+    medianLabel: 'বাজার মধ্যমা',
+    targetLabel: 'প্রতিযোগিতামূলক লক্ষ্য',
+    platformCompare: 'লাইভ প্ল্যাটফর্ম তুলনা',
+    anomalyWarning: 'আপনার দাম বাজার মধ্যমার চেয়ে 40%+ কম।',
+    anomalyFixPlay: 'প্রস্তাবিত দাম শুনুন',
+    reviewTitle: 'লিস্টিং প্রিভিউ',
+    reviewSubtitle: 'AI-প্রস্তুত SEO বিবরণ, ছবি ও মূল্য।',
+    publish: 'লিস্টিং প্রকাশ করুন',
+    publishedTitle: 'প্রকাশিত হয়েছে!',
+    publishedBody: 'আপনার পণ্য এখন মার্কেটপ্লেসে লাইভ।',
+    viewInStore: 'স্টোরে দেখুন',
+    repeatHint: '“আবার বলুন” বা নতুন পরিমাণ',
+    close: 'বন্ধ করুন',
+    privacyNote: 'অনুমতি ছাড়া ছবি/শব্দ ডিভাইস থেকে বের হয় না।',
+    fallbackCamera: 'ক্যামেরা বিকল্প',
+  },
+  mr: {
+    title: 'व्हॉइस लिस्टिंग सहायक',
+    subtitle: 'बोलून आपले उत्पादन तयार करा — फोटो, SEO, किंमत सर्व आपोआप.',
+    start: 'व्हॉइस लिस्टिंग सुरू करा',
+    listening: 'ऐकत आहे…',
+    speaking: 'बोलत आहे…',
+    justSaid: 'आपण म्हणाला:',
+    productName: 'उत्पादनाचे नाव',
+    category: 'प्रकार',
+    materials: 'साहित्य',
+    technique: 'पद्धत',
+    region: 'प्रदेश',
+    continueCta: 'पुढे जा',
+    useCamera: 'कॅमेरा वापरा',
+    retake: 'पुन्हा घ्या',
+    pricingTitle: 'योग्य बाजार किंमत',
+    floorLabel: 'किमान (साहित्य + श्रम)',
+    medianLabel: 'बाजार मध्य',
+    targetLabel: 'स्पर्धात्मक लक्ष्य',
+    platformCompare: 'लाइव्ह प्लॅटफॉर्म तुलना',
+    anomalyWarning: 'आपली किंमत बाजार मध्यापेक्षा 40%+ कमी आहे.',
+    anomalyFixPlay: 'सुचवलेली किंमत ऐका',
+    reviewTitle: 'लिस्टिंग पूर्वदर्शन',
+    reviewSubtitle: 'AI-तयार SEO माहिती, फोटो व किंमत.',
+    publish: 'लिस्टिंग प्रकाशित करा',
+    publishedTitle: 'प्रकाशित!',
+    publishedBody: 'आपले उत्पादन आता मार्केटप्लेसमध्ये लाइव्ह आहे.',
+    viewInStore: 'स्टोअरमध्ये पहा',
+    repeatHint: '“पुन्हा सांगा” किंवा नवीन रक्कम',
+    close: 'बंद करा',
+    privacyNote: 'परवानगीशिवाय फोटो/ऑडिओ डिव्हाइस सोडत नाही.',
+    fallbackCamera: 'कॅमेरा पर्याय',
+  },
+  gu: {
+    title: 'વૉઇસ લિસ્ટિંગ સહાયક',
+    subtitle: 'બોલીને તમારું ઉત્પાદન બનાવો — ફોટો, SEO, ભાવ બધું આપમેળે.',
+    start: 'વૉઇસ લિસ્ટિંગ શરૂ કરો',
+    listening: 'સાંભળી રહ્યું…',
+    speaking: 'બોલી રહ્યું…',
+    justSaid: 'તમે કહ્યું:',
+    productName: 'ઉત્પાદનનું નામ',
+    category: 'શ્રેણી',
+    materials: 'સામગ્રી',
+    technique: 'પદ્ધતિ',
+    region: 'વિસ્તાર',
+    continueCta: 'આગળ વધો',
+    useCamera: 'કૅમેરા વાપરો',
+    retake: 'ફરી લો',
+    pricingTitle: 'યોગ્ય બજાર ભાવ',
+    floorLabel: 'લઘુત્તમ (સામગ્રી + શ્રમ)',
+    medianLabel: 'બજાર મધ્યક',
+    targetLabel: 'સ્પર્ધાત્મક લક્ષ્ય',
+    platformCompare: 'લાઇવ પ્લેટફોર્મ સરખામણી',
+    anomalyWarning: 'તમારો ભાવ બજાર મધ્યક કરતાં 40%+ ઓછો છે.',
+    anomalyFixPlay: 'ભલામણ ભાવ સાંભળો',
+    reviewTitle: 'લિસ્ટિંગ પૂર્વદર્શન',
+    reviewSubtitle: 'AI-તૈયાર SEO વર્ણન, ફોટો અને ભાવ.',
+    publish: 'લિસ્ટિંગ પ્રકાશિત કરો',
+    publishedTitle: 'પ્રકાશિત!',
+    publishedBody: 'તમારું ઉત્પાદન હવે માર્કેટપ્લેસમાં લાઇવ છે.',
+    viewInStore: 'સ્ટોરમાં જુઓ',
+    repeatHint: '“ફરી કહો” અથવા નવી રકમ',
+    close: 'બંધ કરો',
+    privacyNote: 'પરવાનગી વિના ફોટો/ઓડિયો ડિવાઇસ છોડતું નથી.',
+    fallbackCamera: 'કૅમેરા વિકલ્પ',
+  },
+  kn: {
+    title: 'ಧ್ವನಿ ಪಟ್ಟಿ ಸಹಾಯಕ',
+    subtitle: 'ಮಾತನಾಡುವ ಮೂಲಕ ನಿಮ್ಮ ಉತ್ಪನ್ನ ರಚಿಸಿ — ಫೋಟೋ, SEO, ಬೆಲೆ ಎಲ್ಲಾ ಸ್ವಯಂ.',
+    start: 'ಧ್ವನಿ ಪಟ್ಟಿ ಪ್ರಾರಂಭಿಸಿ',
+    listening: 'ಕೇಳುತ್ತಿದ್ದೇನೆ…',
+    speaking: 'ಮಾತನಾಡುತ್ತಿದ್ದೇನೆ…',
+    justSaid: 'ನೀವು ಹೇಳಿದ್ದೀರಿ:',
+    productName: 'ಉತ್ಪನ್ನದ ಹೆಸರು',
+    category: 'ವರ್ಗ',
+    materials: 'ವಸ್ತುಗಳು',
+    technique: 'ತಂತ್ರ',
+    region: 'ಪ್ರದೇಶ',
+    continueCta: 'ಮುಂದುವರೆಯಿರಿ',
+    useCamera: 'ಕ್ಯಾಮೆರಾ ಬಳಸಿ',
+    retake: 'ಮತ್ತೆ ತೆಗೆಯಿರಿ',
+    pricingTitle: 'ನ್ಯಾಯಯುತ ಮಾರುಕಟ್ಟೆ ಬೆಲೆ',
+    floorLabel: 'ಕನಿಷ್ಠ (ವಸ್ತು + ಶ್ರಮ)',
+    medianLabel: 'ಮಾರುಕಟ್ಟೆ ಸರಾಸರಿ',
+    targetLabel: 'ಸ್ಪರ್ಧಾತ್ಮಕ ಗುರಿ',
+    platformCompare: 'ಲೈವ್ ವೇದಿಕೆ ಹೋಲಿಕೆ',
+    anomalyWarning: 'ನಿಮ್ಮ ಬೆಲೆ ಮಾರುಕಟ್ಟೆ ಸರಾಸರಿಗಿಂತ 40%+ ಕಡಿಮೆ.',
+    anomalyFixPlay: 'ಸೂಚಿಸಿದ ಬೆಲೆ ಕೇಳಿ',
+    reviewTitle: 'ಪಟ್ಟಿ ಮುನ್ನೋಟ',
+    reviewSubtitle: 'AI-ಸಿದ್ಧ SEO ವಿವರಣೆ, ಫೋಟೋ & ಬೆಲೆ.',
+    publish: 'ಪಟ್ಟಿಯನ್ನು ಪ್ರಕಟಿಸಿ',
+    publishedTitle: 'ಪ್ರಕಟಿಸಲಾಗಿದೆ!',
+    publishedBody: 'ನಿಮ್ಮ ಉತ್ಪನ್ನ ಈಗ ಮಾರುಕಟ್ಟೆಯಲ್ಲಿ ಲೈವ್.',
+    viewInStore: 'ಅಂಗಡಿಯಲ್ಲಿ ನೋಡಿ',
+    repeatHint: '“ಮತ್ತೆ ಹೇಳಿ” ಅಥವಾ ಹೊಸ ಮೊತ್ತ',
+    close: 'ಮುಚ್ಚಿ',
+    privacyNote: 'ಅನುಮತಿಯಿಲ್ಲದೆ ಫೋಟೋ/ಆಡಿಯೋ ಸಾಧನವನ್ನು ಬಿಡುವುದಿಲ್ಲ.',
+    fallbackCamera: 'ಕ್ಯಾಮೆರಾ ಪರ್ಯಾಯ',
+  },
+  ml: {
+    title: 'വോയ്സ് ലിസ്റ്റിംഗ് സഹായി',
+    subtitle: 'സംസാരിച്ച് നിങ്ങളുടെ ഉൽപ്പന്നം സൃഷ്ടിക്കുക — ഫോട്ടോ, SEO, വില എല്ലാം സ്വയം.',
+    start: 'വോയ്സ് ലിസ്റ്റിംഗ് ആരംഭിക്കുക',
+    listening: 'കേൾക്കുന്നു…',
+    speaking: 'സംസാരിക്കുന്നു…',
+    justSaid: 'നിങ്ങൾ പറഞ്ഞു:',
+    productName: 'ഉൽപ്പന്ന പേര്',
+    category: 'വിഭാഗം',
+    materials: 'വസ്തുക്കൾ',
+    technique: 'രീതി',
+    region: 'പ്രദേശം',
+    continueCta: 'തുടരുക',
+    useCamera: 'ക്യാമറ ഉപയോഗിക്കുക',
+    retake: 'വീണ്ടും എടുക്കുക',
+    pricingTitle: 'ന്യായമായ മാർക്കറ്റ് വില',
+    floorLabel: 'കുറഞ്ഞത് (വസ്തു + അധ്വാനം)',
+    medianLabel: 'മാർക്കറ്റ് ശരാശരി',
+    targetLabel: 'മത്സര ലക്ഷ്യം',
+    platformCompare: 'ലൈവ് പ്ലാറ്റ്ഫോം താരതമ്യം',
+    anomalyWarning: 'നിങ്ങളുടെ വില മാർക്കറ്റ് ശരാശരിയേക്കാൾ 40%+ കുറവാണ്.',
+    anomalyFixPlay: 'ശുപാർശ ചെയ്ത വില കേൾക്കുക',
+    reviewTitle: 'ലിസ്റ്റിംഗ് പ്രിവ്യൂ',
+    reviewSubtitle: 'AI-സജ്ജം SEO വിവരണം, ഫോട്ടോ & വില.',
+    publish: 'ലിസ്റ്റിംഗ് പ്രസിദ്ധീകരിക്കുക',
+    publishedTitle: 'പ്രസിദ്ധീകരിച്ചു!',
+    publishedBody: 'നിങ്ങളുടെ ഉൽപ്പന്നം ഇപ്പോൾ മാർക്കറ്റ്പ്ലേസിൽ ലൈവ്.',
+    viewInStore: 'സ്റ്റോറിൽ കാണുക',
+    repeatHint: '“വീണ്ടും പറയൂ” അല്ലെങ്കിൽ പുതിയ തുക',
+    close: 'അടയ്ക്കുക',
+    privacyNote: 'അനുമതിയില്ലാതെ ഫോട്ടോ/ശബ്ദം ഉപകരണം വിടില്ല.',
+    fallbackCamera: 'ക്യാമറ ബദൽ',
+  },
+  or: {
+    title: 'ଭଏସ୍ ଲିସ୍ଟିଂ ସହାୟକ',
+    subtitle: 'କହିକି ଆପଣଙ୍କ ଉତ୍ପାଦ ତିଆରି କରନ୍ତୁ — ଫଟୋ, SEO, ଦାମ୍ ସବୁ ଅଟୋ।',
+    start: 'ଭଏସ୍ ଲିସ୍ଟିଂ ଆରମ୍ଭ କରନ୍ତୁ',
+    listening: 'ଶୁଣୁଛି…',
+    speaking: 'କହୁଛି…',
+    justSaid: 'ଆପଣ କହିଲେ:',
+    productName: 'ଉତ୍ପାଦର ନାମ',
+    category: 'ଶ୍ରେଣୀ',
+    materials: 'ସାମଗ୍ରୀ',
+    technique: 'ପଦ୍ଧତି',
+    region: 'ଅଞ୍ଚଳ',
+    continueCta: 'ଆଗକୁ ଯାଆନ୍ତୁ',
+    useCamera: 'କ୍ୟାମେରା ବ୍ୟବହାର କରନ୍ତୁ',
+    retake: 'ପୁଣି ଉଠାନ୍ତୁ',
+    pricingTitle: 'ଉଚିତ ବଜାର ମୂଲ୍ୟ',
+    floorLabel: 'ସର୍ବନିମ୍ନ (ସାମଗ୍ରୀ + ଶ୍ରମ)',
+    medianLabel: 'ବଜାର ମଧ୍ୟକ',
+    targetLabel: 'ପ୍ରତିଯୋଗିତା ଲକ୍ଷ୍ୟ',
+    platformCompare: 'ଲାଇଭ୍ ପ୍ଲାଟଫର୍ମ ତୁଳନା',
+    anomalyWarning: 'ଆପଣଙ୍କ ଦାମ୍ ବଜାର ମଧ୍ୟକଠାରୁ 40%+ କମ୍।',
+    anomalyFixPlay: 'ସୁପାରିଶ ଦାମ୍ ଶୁଣନ୍ତୁ',
+    reviewTitle: 'ଲିସ୍ଟିଂ ପ୍ରିଭ୍ୟୁ',
+    reviewSubtitle: 'AI-ପ୍ରସ୍ତୁତ SEO ବର୍ଣ୍ଣନା, ଫଟୋ ଓ ଦାମ୍।',
+    publish: 'ଲିସ୍ଟିଂ ପ୍ରକାଶ କରନ୍ତୁ',
+    publishedTitle: 'ପ୍ରକାଶିତ!',
+    publishedBody: 'ଆପଣଙ୍କ ଉତ୍ପାଦ ଏବେ ମାର୍କେଟପ୍ଲେସରେ ଲାଇଭ୍।',
+    viewInStore: 'ଷ୍ଟୋରରେ ଦେଖନ୍ତୁ',
+    repeatHint: '“ଆଉ ଥରେ କୁହନ୍ତୁ” କିମ୍ବା ନୂଆ ରାଶି',
+    close: 'ବନ୍ଦ କରନ୍ତୁ',
+    privacyNote: 'ଅନୁମତି ବିନା ଫଟୋ/ଅଡିଓ ଡିଭାଇସ୍ ଛାଡ଼େ ନାହିଁ।',
+    fallbackCamera: 'କ୍ୟାମେରା ବିକଳ୍ପ',
+  },
+  pa: {
+    title: 'ਵੌਇਸ ਲਿਸਟਿੰਗ ਸਹਾਇਕ',
+    subtitle: 'ਬੋਲ ਕੇ ਆਪਣਾ ਉਤਪਾਦ ਬਣਾਓ — ਫੋਟੋ, SEO, ਕੀਮਤ ਸਭ ਆਪਣੇ ਆਪ।',
+    start: 'ਵੌਇਸ ਲਿਸਟਿੰਗ ਸ਼ੁਰੂ ਕਰੋ',
+    listening: 'ਸੁਣ ਰਿਹਾ ਹਾਂ…',
+    speaking: 'ਬੋਲ ਰਿਹਾ ਹਾਂ…',
+    justSaid: 'ਤੁਸੀਂ ਕਿਹਾ:',
+    productName: 'ਉਤਪਾਦ ਦਾ ਨਾਮ',
+    category: 'ਸ਼੍ਰੇਣੀ',
+    materials: 'ਸਮੱਗਰੀ',
+    technique: 'ਵਿਧੀ',
+    region: 'ਖੇਤਰ',
+    continueCta: 'ਅੱਗੇ ਵਧੋ',
+    useCamera: 'ਕੈਮਰਾ ਵਰਤੋ',
+    retake: 'ਦੁਬਾਰਾ ਲਓ',
+    pricingTitle: 'ਉਚਿਤ ਬਾਜ਼ਾਰ ਕੀਮਤ',
+    floorLabel: 'ਘੱਟੋ-ਘੱਟ (ਸਮੱਗਰੀ + ਮਿਹਨਤ)',
+    medianLabel: 'ਬਾਜ਼ਾਰ ਮੱਧਮਾਨ',
+    targetLabel: 'ਮੁਕਾਬਲੇ ਦਾ ਟੀਚਾ',
+    platformCompare: 'ਲਾਈਵ ਪਲੇਟਫਾਰਮ ਤੁਲਨਾ',
+    anomalyWarning: 'ਤੁਹਾਡੀ ਕੀਮਤ ਬਾਜ਼ਾਰ ਮੱਧਮਾਨ ਤੋਂ 40%+ ਘੱਟ ਹੈ।',
+    anomalyFixPlay: 'ਸੁਝਾਈ ਕੀਮਤ ਸੁਣੋ',
+    reviewTitle: 'ਲਿਸਟਿੰਗ ਪੂਰਵ-ਦਰਸ਼ਨ',
+    reviewSubtitle: 'AI-ਤਿਆਰ SEO ਵੇਰਵਾ, ਫੋਟੋ ਅਤੇ ਕੀਮਤ।',
+    publish: 'ਲਿਸਟਿੰਗ ਪ੍ਰਕਾਸ਼ਿਤ ਕਰੋ',
+    publishedTitle: 'ਪ੍ਰਕਾਸ਼ਿਤ!',
+    publishedBody: 'ਤੁਹਾਡਾ ਉਤਪਾਦ ਹੁਣ ਮਾਰਕੀਟਪਲੇਸ ਵਿੱਚ ਲਾਈਵ ਹੈ।',
+    viewInStore: 'ਸਟੋਰ ਵਿੱਚ ਦੇਖੋ',
+    repeatHint: '“ਫਿਰ ਦੱਸੋ” ਜਾਂ ਨਵੀਂ ਰਕਮ',
+    close: 'ਬੰਦ ਕਰੋ',
+    privacyNote: 'ਇਜਾਜ਼ਤ ਤੋਂ ਬਿਨਾਂ ਫੋਟੋ/ਆਡੀਓ ਡਿਵਾਈਸ ਨਹੀਂ ਛੱਡਦਾ।',
+    fallbackCamera: 'ਕੈਮਰਾ ਵਿਕਲਪ',
+  },
+  en: {
+    title: 'Voice Listing Assistant',
+    subtitle: 'Create your product by speaking — photo, SEO and pricing prepared automatically.',
+    start: 'Start Voice Listing',
+    listening: 'Listening…',
+    speaking: 'Speaking…',
+    justSaid: 'You said:',
+    productName: 'Product Name',
+    category: 'Category',
+    materials: 'Materials',
+    technique: 'Technique',
+    region: 'Region',
+    continueCta: 'Continue',
+    useCamera: 'Use Camera',
+    retake: 'Retake',
+    pricingTitle: 'Fair Market Price',
+    floorLabel: 'Floor (materials + labor)',
+    medianLabel: 'Market Median',
+    targetLabel: 'Competitive Target',
+    platformCompare: 'Live platform comparison',
+    anomalyWarning: 'Your price is 40%+ below the market median.',
+    anomalyFixPlay: 'Play recommended price',
+    reviewTitle: 'Listing Preview',
+    reviewSubtitle: 'AI-ready SEO description, photo & pricing.',
+    publish: 'Publish Listing',
+    publishedTitle: 'Published!',
+    publishedBody: 'Your product is now live in the marketplace.',
+    viewInStore: 'View in Store',
+    repeatHint: 'Say "repeat" or a new amount',
+    close: 'Close',
+    privacyNote: 'Photos & audio never leave your device without your consent.',
+    fallbackCamera: 'Camera alternative',
+  },
+};
+
+export function getAssistantUi(language: SupportedLanguageCode): AssistantUiStrings {
+  return ASSISTANT_UI[language] || ASSISTANT_UI.en;
+}
+
+export const SAMPLE_CAPTURES = [
+  {
+    name: 'Terracotta Vase',
+    craft: 'Terracotta Pottery',
+    raw: 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=600&q=80',
+    studio: 'https://images.unsplash.com/photo-1612196808214-b8e1d6145a8c?auto=format&fit=crop&w=800&q=85',
+  },
+  {
+    name: 'Clay Diya Lamp',
+    craft: 'Clay Sculpting',
+    raw: 'https://images.unsplash.com/photo-1605000797499-95a51c5269ae?auto=format&fit=crop&w=600&q=80',
+    studio: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=800&q=85',
+  },
+  {
+    name: 'Silk Handloom Mat',
+    craft: 'Pattamadai Handloom Weaving',
+    raw: 'https://images.unsplash.com/photo-1590736969955-71cc94801759?auto=format&fit=crop&w=600&q=80',
+    studio: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=85',
+  },
+];
+
+// ---------------------------------------------------------------------------
+// Voice login / onboarding localization bank (all 11 languages)
+// The spoken prompts are passed straight to SpeechService.speak(lang), so the
+// assistant narrates the login journey in the artisan's own language.
+// ---------------------------------------------------------------------------
+
+export type AuthRole = 'Buyer' | 'Seller';
+
+export interface AuthStrings {
+  welcomeSpoken: string;
+  roleSpoken: string;
+  confirmSpoken: (name: string, role: AuthRole) => string;
+  saySeller: string;
+  sayBuyer: string;
+  sayName: string;
+  sayPhone: string;
+  stepRole: string;
+  stepIdentity: string;
+  stepLogin: string;
+  listening: string;
+  speaking: string;
+  verified: string;
+  processing: string;
+  heading: string;
+  subtitle: string;
+}
+
+export const AUTH_STRINGS: Record<SupportedLanguageCode, AuthStrings> = {
+  hi: {
+    welcomeSpoken: 'नमस्ते! आज आप हमारे साथ जुड़ रहे हैं। कृपया बताइए — क्या आप कारीगर हैं या खरीदार?',
+    roleSpoken: 'धन्यवाद! कृपया अपना नाम या पंजीकृत मोबाइल नंबर बताएं।',
+    confirmSpoken: (name, role) =>
+      `ठीक है, ${name} जी! आप ${role === 'Seller' ? 'कारीगर' : 'खरीदार'} के रूप में लॉग इन हो गए हैं। आइए, शुरू करें।`,
+    saySeller: 'कहें: "कारीगर" (Seller)',
+    sayBuyer: 'कहें: "खरीदार" (Buyer)',
+    sayName: 'कहें: रामवती देवी',
+    sayPhone: 'कहें: 9876543210',
+    stepRole: 'भूमिका',
+    stepIdentity: 'पहचान',
+    stepLogin: 'लॉगिन',
+    listening: 'आपकी आवाज़ सुनी जा रही है...',
+    speaking: 'सहायिका बोल रही है...',
+    verified: 'आवाज़ की पहचान सत्यापित हो गई!',
+    processing: 'प्रक्रिया जारी है...',
+    heading: 'हैंड्स-फ्री वॉयस ऑनबोर्डिंग',
+    subtitle: 'ग्रामीण कारीगरों के लिए शुद्ध बातचीत आधारित प्रमाणीकरण। टाइपिंग या पासवर्ड की ज़रूरत नहीं।',
+  },
+  ta: {
+    welcomeSpoken: 'வணக்கம்! இன்று நீங்கள் எங்களுடன் இணைகிறீர்கள். நீங்கள் விற்பவரா அல்லது வாங்குபவரா?',
+    roleSpoken: 'நன்றி! தயவுசெய்து உங்கள் பெயர் அல்லது பதிவுசெய்யப்பட்ட கைபேசி எண்ணைச் சொல்லுங்கள்.',
+    confirmSpoken: (name, role) =>
+      `சரி, ${name}! நீங்கள் ${role === 'Seller' ? 'விற்பவர்' : 'வாங்குபவர்'} ஆக உள்நுழைந்துள்ளீர்கள். தொடங்குவோம்.`,
+    saySeller: 'சொல்லுங்கள்: "விற்பவர்" (Seller)',
+    sayBuyer: 'சொல்லுங்கள்: "வாங்குபவர்" (Buyer)',
+    sayName: 'சொல்லுங்கள்: ராம்வதி தேவி',
+    sayPhone: 'சொல்லுங்கள்: 9876543210',
+    stepRole: 'பங்கு',
+    stepIdentity: 'அடையாளம்',
+    stepLogin: 'உள்நுழைவு',
+    listening: 'உங்கள் குரல் கேட்கப்படுகிறது...',
+    speaking: 'உதவியாளர் பேசுகிறார்...',
+    verified: 'குரல் அடையாளம் சரிபார்க்கப்பட்டது!',
+    processing: 'செயலாக்கப்படுகிறது...',
+    heading: 'குரல் ஓன்போர்டிங்',
+    subtitle: 'கிராமப்புற கைவினைஞர்களுக்கான தூய உரையாடல் அங்கீகாரம். தட்டச்சு அல்லது கடவுச்சொல் தேவையில்லை.',
+  },
+  te: {
+    welcomeSpoken: 'నమస్కారం! ఈ రోజు మీరు మాతో చేరుతున్నారు. మీరు విక్రేతా లేదా కొనుగోలుదారా?',
+    roleSpoken: 'ధన్యవాదాలు! దయచేసి మీ పేరు లేదా నమోదిత మొబైల్ నంబర్ చెప్పండి.',
+    confirmSpoken: (name, role) =>
+      `సరే, ${name}! మీరు ${role === 'Seller' ? 'విక్రేత' : 'కొనుగోలుదారు'}గా లాగిన్ అయ్యారు. ప్రారంభిద్దాం.`,
+    saySeller: 'చెప్పండి: "విక్రేత" (Seller)',
+    sayBuyer: 'చెప్పండి: "కొనుగోలుదారు" (Buyer)',
+    sayName: 'చెప్పండి: రామ్‌వతీ దేవి',
+    sayPhone: 'చెప్పండి: 9876543210',
+    stepRole: 'పాత్ర',
+    stepIdentity: 'గుర్తింపు',
+    stepLogin: 'లాగిన్',
+    listening: 'మీ గొంతు వినబడుతోంది...',
+    speaking: 'సహాయకుడు మాట్లాడుతున్నాడు...',
+    verified: 'వాయిస్ గుర్తింపు ధృవీకరించబడింది!',
+    processing: 'ప్రాసెస్ అవుతోంది...',
+    heading: 'వాయిస్ ఆన్‌బోర్డింగ్',
+    subtitle: 'గ్రామీణ కళాకారులకు స్వచ్ఛమైన సంభాషణ ఆధారిత ప్రమాణీకరణ. టైపింగ్ లేదా పాస్‌వర్డ్ అవసరం లేదు.',
+  },
+  bn: {
+    welcomeSpoken: 'নমস্কার! আজ আপনি আমাদের সঙ্গে যুক্ত হচ্ছেন। আপনি কি বিক্রেতা নাকি ক্রেতা?',
+    roleSpoken: 'ধন্যবাদ! অনুগ্রহ করে আপনার নাম বা নিবন্ধিত মোবাইল নম্বর বলুন।',
+    confirmSpoken: (name, role) =>
+      `ঠিক আছে, ${name}! আপনি ${role === 'Seller' ? 'বিক্রেতা' : 'ক্রেতা'} হিসাবে লগ ইন হয়েছেন। শুরু করা যাক।`,
+    saySeller: 'বলুন: "বিক্রেতা" (Seller)',
+    sayBuyer: 'বলুন: "ক্রেতা" (Buyer)',
+    sayName: 'বলুন: রামবতী দেবী',
+    sayPhone: 'বলুন: 9876543210',
+    stepRole: 'ভূমিকা',
+    stepIdentity: 'পরিচয়',
+    stepLogin: 'লগইন',
+    listening: 'আপনার কণ্ঠ শোনা হচ্ছে...',
+    speaking: 'সহায়িকী বলছে...',
+    verified: 'কণ্ঠ পরিচয় যাচাই হয়েছে!',
+    processing: 'প্রক্রিয়া চলছে...',
+    heading: 'ভয়েস অনবোর্ডিং',
+    subtitle: 'গ্রামীণ কারিগরদের জন্য বিশুদ্ধ কথোপকথনভিত্তিক প্রমাণীকরণ। টাইপিং বা পাসওয়ার্ডের প্রয়োজন নেই।',
+  },
+  mr: {
+    welcomeSpoken: 'नमस्कार! आज तुम्ही आमच्यासोबत सामील होत आहात. तुम्ही विक्रेता आहात की खरेदीदार?',
+    roleSpoken: 'धन्यवाद! कृपया तुमचे नाव किंवा नोंदणीकृत मोबाईल क्रमांक सांगा.',
+    confirmSpoken: (name, role) =>
+      `ठीक आहे, ${name}! तुम्ही ${role === 'Seller' ? 'विक्रेता' : 'खरेदीदार'} म्हणून लॉग इन झाला आहात. चला, सुरुवात करूया.`,
+    saySeller: 'म्हणा: "विक्रेता" (Seller)',
+    sayBuyer: 'म्हणा: "खरेदीदार" (Buyer)',
+    sayName: 'म्हणा: रामवती देवी',
+    sayPhone: 'म्हणा: 9876543210',
+    stepRole: 'भूमिका',
+    stepIdentity: 'ओळख',
+    stepLogin: 'लॉगिन',
+    listening: 'तुमचा आवाज ऐकला जात आहे...',
+    speaking: 'सहाय्यिका बोलत आहे...',
+    verified: 'आवाजाची ओळख सत्यापित झाली!',
+    processing: 'प्रक्रिया सुरू आहे...',
+    heading: 'व्हॉईस ऑनबोर्डिंग',
+    subtitle: 'ग्रामीण कारागिरांसाठी संवादावर आधारित प्रमाणीकरण. टायपिंग किंवा पासवर्डची गरज नाही.',
+  },
+  gu: {
+    welcomeSpoken: 'નમસ્તે! આજે તમે અમારી સાથે જોડાઈ રહ્યા છો. શું તમે વિક્રેતા છો કે ખરીદદાર?',
+    roleSpoken: 'આભાર! કૃપા કરીને તમારું નામ અથવા નોંધાયેલ મોબાઈલ નંબર કહો.',
+    confirmSpoken: (name, role) =>
+      `બરાબર, ${name}! તમે ${role === 'Seller' ? 'વિક્રેતા' : 'ખરીદદાર'} તરીકે લોગિન થયા છો. ચાલો શરૂ કરીએ.`,
+    saySeller: 'કહો: "વિક્રેતા" (Seller)',
+    sayBuyer: 'કહો: "ખરીદદાર" (Buyer)',
+    sayName: 'કહો: રામવતી દેવી',
+    sayPhone: 'કહો: 9876543210',
+    stepRole: 'ભૂમિકા',
+    stepIdentity: 'ઓળખ',
+    stepLogin: 'લોગિન',
+    listening: 'તમારો અવાજ સંભળાય છે...',
+    speaking: 'સહાયિકા બોલે છે...',
+    verified: 'અવાજની ઓળખ ચકાસાઈ!',
+    processing: 'પ્રક્રિયા ચાલુ છે...',
+    heading: 'વૉઇસ ઑનબોર્ડિંગ',
+    subtitle: 'ગ્રામીણ કારીગરો માટે શુદ્ધ વાર્તાલાપ આધારિત પ્રમાણીકરણ. ટાઈપિંગ કે પાસવર્ડની જરૂર નથી.',
+  },
+  kn: {
+    welcomeSpoken: 'ನಮಸ್ಕಾರ! ಇಂದು ನೀವು ನಮ್ಮೊಂದಿಗೆ ಸೇರುತ್ತಿದ್ದೀರಿ. ನೀವು ಮಾರಾಟಗಾರರೋ ಅಥವಾ ಖರೀದಿದಾರರೋ?',
+    roleSpoken: 'ಧನ್ಯವಾದಗಳು! ದಯವಿಟ್ಟು ನಿಮ್ಮ ಹೆಸರು ಅಥವಾ ನೋಂದಾಯಿತ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯನ್ನು ತಿಳಿಸಿ.',
+    confirmSpoken: (name, role) =>
+      `ಸರಿ, ${name}! ನೀವು ${role === 'Seller' ? 'ಮಾರಾಟಗಾರ' : 'ಖರೀದಿದಾರ'} ಆಗಿ ಲಾಗಿನ್ ಮಾಡಿದ್ದೀರಿ. ಪ್ರಾರಂಭಿಸೋಣ.`,
+    saySeller: 'ಹೇಳಿ: "ಮಾರಾಟಗಾರ" (Seller)',
+    sayBuyer: 'ಹೇಳಿ: "ಖರೀದಿದಾರ" (Buyer)',
+    sayName: 'ಹೇಳಿ: ರಾಮ್‌ವತಿ ದೇವಿ',
+    sayPhone: 'ಹೇಳಿ: 9876543210',
+    stepRole: 'ಪಾತ್ರ',
+    stepIdentity: 'ಗುರುತು',
+    stepLogin: 'ಲಾಗಿನ್',
+    listening: 'ನಿಮ್ಮ ಧ್ವನಿ ಕೇಳಲಾಗುತ್ತಿದೆ...',
+    speaking: 'ಸಹಾಯಕಿ ಮಾತನಾಡುತ್ತಿದ್ದಾಳೆ...',
+    verified: 'ಧ್ವನಿ ಗುರುತು ಪರಿಶೀಲನೆಯಾಗಿದೆ!',
+    processing: 'ಪ್ರಕ್ರಿಯೆ ನಡೆಯುತ್ತಿದೆ...',
+    heading: 'ವಾಯ್ಸ್ ಆನ್‌ಬೋರ್ಡಿಂಗ್',
+    subtitle: 'ಗ್ರಾಮೀಣ ಕುಶಲಕರ್ಮಿಗಳಿಗೆ ಸಂಪೂರ್ಣ ಸಂಭಾಷಣಾ ಆಧಾರಿತ ದೃಢೀಕರಣ. ಟೈಪಿಂಗ್ ಅಥವಾ ಪಾಸ್‌ವರ್ಡ್ ಅಗತ್ಯವಿಲ್ಲ.',
+  },
+  ml: {
+    welcomeSpoken: 'നമസ്കാരം! ഇന്ന് നിങ്ങൾ ഞങ്ങളോടൊപ്പം ചേരുകയാണ്. നിങ്ങൾ വിൽപ്പനക്കാരനാണോ വാങ്ങുന്നയാളാണോ?',
+    roleSpoken: 'നന്ദി! നിങ്ങളുടെ പേരോ രജിസ്റ്റർ ചെയ്ത മൊബൈൽ നമ്പറോ പറയുക.',
+    confirmSpoken: (name, role) =>
+      `ശരി, ${name}! നിങ്ങൾ ${role === 'Seller' ? 'വിൽപ്പനക്കാരൻ' : 'വാങ്ങുന്നയാൾ'} ആയി ലോഗിൻ ചെയ്തു. നമുക്ക് തുടങ്ങാം.`,
+    saySeller: 'പറയൂ: "വിൽപ്പനക്കാരൻ" (Seller)',
+    sayBuyer: 'പറയൂ: "വാങ്ങുന്നയാൾ" (Buyer)',
+    sayName: 'പറയൂ: രാംവതി ദേവി',
+    sayPhone: 'പറയൂ: 9876543210',
+    stepRole: 'പങ്ക്',
+    stepIdentity: 'തിരിച്ചറിയൽ',
+    stepLogin: 'ലോഗിൻ',
+    listening: 'നിങ്ങളുടെ ശബ്ദം കേൾക്കുന്നു...',
+    speaking: 'സഹായി സംസാരിക്കുന്നു...',
+    verified: 'ശബ്ദ തിരിച്ചറിയൽ സ്ഥിരീകരിച്ചു!',
+    processing: 'പ്രോസസ്സിംഗ്...',
+    heading: 'വോയ്സ് ഓൺബോർഡിംഗ്',
+    subtitle: 'ഗ്രാമീണ കരകൗശല വിദഗ്ധർക്കുള്ള സംഭാഷണ അധിഷ്ഠിത പ്രാമാണീകരണം. ടൈപ്പിംഗോ പാസ്‌വേഡോ ആവശ്യമില്ല.',
+  },
+  or: {
+    welcomeSpoken: 'ନମସ୍କାର! ଆଜି ଆପଣ ଆମ ସହ ଯୋଗ ଦେଉଛନ୍ତି। ଆପଣ ବିକ୍ରେତା କି କ୍ରେତା?',
+    roleSpoken: 'ଧନ୍ୟବାଦ! ଦୟାକରି ଆପଣଙ୍କ ନାମ କିମ୍ବା ପଞ୍ଜୀକୃତ ମୋବାଇଲ୍ ନମ୍ବର କୁହନ୍ତୁ।',
+    confirmSpoken: (name, role) =>
+      `ଠିକ୍ ଅଛି, ${name}! ଆପଣ ${role === 'Seller' ? 'ବିକ୍ରେତା' : 'କ୍ରେତା'} ଭାବରେ ଲଗିନ୍ ହୋଇଛନ୍ତି। ଚାଲ, ଆରମ୍ଭ କରିବା।`,
+    saySeller: 'କୁହନ୍ତୁ: "ବିକ୍ରେତା" (Seller)',
+    sayBuyer: 'କୁହନ୍ତୁ: "କ୍ରେତା" (Buyer)',
+    sayName: 'କୁହନ୍ତୁ: ରାମବତୀ ଦେବୀ',
+    sayPhone: 'କୁହନ୍ତୁ: 9876543210',
+    stepRole: 'ଭୂମିକା',
+    stepIdentity: 'ପରିଚୟ',
+    stepLogin: 'ଲଗିନ୍',
+    listening: 'ଆପଣଙ୍କ ସ୍ୱର ଶୁଣାଯାଉଛି...',
+    speaking: 'ସହାୟିକା କହୁଛି...',
+    verified: 'ସ୍ୱର ପରିଚୟ ଯାଞ୍ଚ ହୋଇଛି!',
+    processing: 'ପ୍ରକ୍ରିୟା ଚାଲିଛି...',
+    heading: 'ଭଏସ୍ ଅନବୋର୍ଡିଂ',
+    subtitle: 'ଗ୍ରାମୀଣ ଶିଳ୍ପୀମାନଙ୍କ ପାଇଁ ଶୁଦ୍ଧ କଥାବାର୍ତ୍ତା ଆଧାରିତ ଯାଞ୍ଚ। ଟାଇପିଂ କିମ୍ବା ପାସୱାର୍ଡ ଆବଶ୍ୟକ ନାହିଁ।',
+  },
+  pa: {
+    welcomeSpoken: 'ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ! ਅੱਜ ਤੁਸੀਂ ਸਾਡੇ ਨਾਲ ਜੁੜ ਰਹੇ ਹੋ। ਕੀ ਤੁਸੀਂ ਵਿਕਰੇਤਾ ਹੋ ਜਾਂ ਖਰੀਦਦਾਰ?',
+    roleSpoken: 'ਧੰਨਵਾਦ! ਕਿਰਪਾ ਕਰਕੇ ਆਪਣਾ ਨਾਮ ਜਾਂ ਰਜਿਸਟਰਡ ਮੋਬਾਈਲ ਨੰਬਰ ਦੱਸੋ।',
+    confirmSpoken: (name, role) =>
+      `ਠੀਕ ਹੈ, ${name}! ਤੁਸੀਂ ${role === 'Seller' ? 'ਵਿਕਰੇਤਾ' : 'ਖਰੀਦਦਾਰ'} ਵਜੋਂ ਲੌਗ ਇਨ ਹੋ ਗਏ ਹੋ। ਚੱਲੋ, ਸ਼ੁਰੂ ਕਰੀਏ।`,
+    saySeller: 'ਕਹੋ: "ਵਿਕਰੇਤਾ" (Seller)',
+    sayBuyer: 'ਕਹੋ: "ਖਰੀਦਦਾਰ" (Buyer)',
+    sayName: 'ਕਹੋ: ਰਾਮਵਤੀ ਦੇਵੀ',
+    sayPhone: 'ਕਹੋ: 9876543210',
+    stepRole: 'ਭੂਮਿਕਾ',
+    stepIdentity: 'ਪਛਾਣ',
+    stepLogin: 'ਲੌਗਇਨ',
+    listening: 'ਤੁਹਾਡੀ ਆਵਾਜ਼ ਸੁਣੀ ਜਾ ਰਹੀ ਹੈ...',
+    speaking: 'ਸਹਾਇਕ ਬੋਲ ਰਿਹਾ ਹੈ...',
+    verified: 'ਆਵਾਜ਼ ਦੀ ਪਛਾਣ ਪੁਸ਼ਟੀ ਹੋ ਗਈ!',
+    processing: 'ਕਾਰਵਾਈ ਜਾਰੀ ਹੈ...',
+    heading: 'ਵੌਇਸ ਔਨਬੋਰਡਿੰਗ',
+    subtitle: 'ਪੇਂਡੂ ਕਾਰੀਗਰਾਂ ਲਈ ਸੰਵਾਦ ਅਧਾਰਤ ਪ੍ਰਮਾਣੀਕਰਨ। ਟਾਈਪਿੰਗ ਜਾਂ ਪਾਸਵਰਡ ਦੀ ਲੋੜ ਨਹੀਂ।',
+  },
+  en: {
+    welcomeSpoken: 'Welcome! Are you joining us today as a Seller or a Buyer?',
+    roleSpoken: 'Thank you. Please tell me your name or registered phone number.',
+    confirmSpoken: (name, role) =>
+      `Got it, logging you in as ${name}, as a ${role}. Let's get started.`,
+    saySeller: 'Say: "Seller" (कारीगर)',
+    sayBuyer: 'Say: "Buyer" (खरीदार)',
+    sayName: 'Say: "Ramvati Devi"',
+    sayPhone: 'Say: "9876543210"',
+    stepRole: 'Role',
+    stepIdentity: 'Identity',
+    stepLogin: 'Login',
+    listening: 'Listening to your voice...',
+    speaking: 'Assistant Speaking...',
+    verified: 'Voice Identity Verified!',
+    processing: 'Processing...',
+    heading: 'Hands-Free Voice Onboarding',
+    subtitle: 'Pure conversational authentication for rural craftspeople. No typing or complex passwords required.',
+  },
+};
+
+export function getAuthStrings(language: SupportedLanguageCode): AuthStrings {
+  return AUTH_STRINGS[language] || AUTH_STRINGS.en;
+}

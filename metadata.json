@@ -1,0 +1,11 @@
+{
+  "name": "Bharat TULIP Artisan Voice Studio",
+  "description": "Voice-first AI market linkage and smart cataloging mobile app empowering marginalized artisans with multilingual onboarding, AI studio photoshoots, SEO descriptions, fair market pricing, and storefront linkage.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

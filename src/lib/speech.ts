@@ -1,0 +1,210 @@
+import { SupportedLanguageCode } from '../types';
+import { SUPPORTED_LANGUAGES } from './languages';
+import { describeVoice, preloadVoices, resolveVoice } from './voiceLanguage';
+
+export interface SpeechRecognitionResultHandler {
+  onResult: (text: string, isFinal: boolean) => void;
+  onError: (error: string) => void;
+  onEnd: () => void;
+}
+
+export interface SpeechCapabilities {
+  ttsAvailable: boolean;
+  recogAvailable: boolean;
+  ttsVoices: number;
+  preferredVoice: string | null;
+}
+
+export class SpeechService {
+  private static recognition: any = null;
+  private static isListeningState = false;
+  private static cachedVoices: SpeechSynthesisVoice[] | null = null;
+
+  static getCapabilities(): SpeechCapabilities {
+    const ttsAvailable = typeof window !== 'undefined' && 'speechSynthesis' in window;
+    const SpeechRec =
+      typeof window !== 'undefined'
+        ? (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+        : undefined;
+    const voices = this.cachedVoices || (ttsAvailable ? window.speechSynthesis.getVoices() : []);
+    return {
+      ttsAvailable,
+      recogAvailable: Boolean(SpeechRec),
+      ttsVoices: voices.length,
+      preferredVoice: voices.length ? describeVoice(voices[0]) : null,
+    };
+  }
+
+  /** Returns the least-noisy native voice available for the selected language. */
+  static pickVoice(languageCode: SupportedLanguageCode): SpeechSynthesisVoice | null {
+    const all = this.cachedVoices || (typeof window !== 'undefined' ? window.speechSynthesis.getVoices() : []);
+    return resolveVoice(languageCode, all).voice;
+  }
+
+  // Speaks text using Web Speech API in the selected regional language.
+  // Voices are preloaded lazily on first use so a regional (e.g. hi-IN) voice is
+  // resolved instead of silently falling back to reading Indian-langauge text
+  // back in an English accent. A mismatched voice is never forced onto text.
+  static speak(
+    text: string,
+    languageCode: SupportedLanguageCode,
+    onStart?: () => void,
+    onEnd?: () => void
+  ): void {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+      console.warn('Speech synthesis not supported in this browser');
+      if (onEnd) onEnd();
+      return;
+    }
+
+    const speakNow = () => {
+      try {
+        window.speechSynthesis.cancel(); // cancel any ongoing speech
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        const langConfig = SUPPORTED_LANGUAGES.find((l) => l.code === languageCode);
+        const targetLocale = langConfig ? langConfig.speechLocale : 'en-IN';
+        utterance.lang = targetLocale;
+        utterance.rate = 0.95; // slightly slower for uneducated rural listeners
+        utterance.pitch = 1.05; // warm, friendly tone
+
+        // Select an authentic regional voice. For native-language targets we only
+        // assign a voice when its language actually matches; otherwise the engine
+        // picks a voice itself from utterance.lang so Hindi text never gets an
+        // English voice (which previously garbled pronunciation).
+        const voices =
+          this.cachedVoices && this.cachedVoices.length
+            ? this.cachedVoices
+            : window.speechSynthesis.getVoices();
+        if (voices && voices.length) {
+          this.cachedVoices = voices;
+          const resolved = resolveVoice(languageCode, voices);
+          if (resolved.voice && resolved.matched) {
+            utterance.voice = resolved.voice;
+          }
+        }
+
+        utterance.onstart = () => {
+          if (onStart) onStart();
+        };
+        utterance.onend = () => {
+          if (onEnd) onEnd();
+        };
+        utterance.onerror = (e) => {
+          console.warn('Speech synthesis error:', e);
+          if (onEnd) onEnd();
+        };
+
+        window.speechSynthesis.speak(utterance);
+      } catch (err) {
+        console.error('Speech error:', err);
+        if (onEnd) onEnd();
+      }
+    };
+
+    const voicesReady =
+      this.cachedVoices && this.cachedVoices.length
+        ? this.cachedVoices
+        : window.speechSynthesis.getVoices();
+    if (voicesReady.length) {
+      speakNow();
+      return;
+    }
+
+    preloadVoices()
+      .then((voices) => {
+        this.cachedVoices = voices && voices.length ? voices : window.speechSynthesis.getVoices();
+        speakNow();
+      })
+      .catch(() => speakNow());
+  }
+
+  static stopSpeaking(): void {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+  }
+
+  // Starts microphone voice recognition with browser support fallback
+  static startListening(
+    languageCode: SupportedLanguageCode,
+    handlers: SpeechRecognitionResultHandler
+  ): boolean {
+    if (typeof window === 'undefined') return false;
+
+    const SpeechRec = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRec) {
+      handlers.onError('Microphone speech recognition not available in this browser');
+      return false;
+    }
+
+    try {
+      if (this.recognition) {
+        try {
+          this.recognition.abort();
+        } catch {
+          // ignore
+        }
+      }
+
+      const langConfig = SUPPORTED_LANGUAGES.find((l) => l.code === languageCode);
+      const targetLocale = langConfig ? langConfig.speechLocale : 'en-IN';
+
+      this.recognition = new SpeechRec();
+      this.recognition.continuous = false;
+      this.recognition.interimResults = true;
+      this.recognition.lang = targetLocale;
+
+      this.recognition.onstart = () => {
+        this.isListeningState = true;
+      };
+
+      this.recognition.onresult = (event: any) => {
+        let interim = '';
+        let final = '';
+
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            final += event.results[i][0].transcript;
+          } else {
+            interim += event.results[i][0].transcript;
+          }
+        }
+
+        if (final) {
+          handlers.onResult(final, true);
+        } else if (interim) {
+          handlers.onResult(interim, false);
+        }
+      };
+
+      this.recognition.onerror = (event: any) => {
+        this.isListeningState = false;
+        handlers.onError(event.error || 'Speech capture error');
+      };
+
+      this.recognition.onend = () => {
+        this.isListeningState = false;
+        handlers.onEnd();
+      };
+
+      this.recognition.start();
+      return true;
+    } catch (err: any) {
+      this.isListeningState = false;
+      handlers.onError(err.message || 'Failed to start microphone');
+      return false;
+    }
+  }
+
+  static stopListening(): void {
+    if (this.recognition && this.isListeningState) {
+      try {
+        this.recognition.stop();
+      } catch {
+        // ignore
+      }
+      this.isListeningState = false;
+    }
+  }
+}
