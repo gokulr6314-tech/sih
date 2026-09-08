@@ -100,74 +100,74 @@ export const VoiceAssistantOrb: React.FC<VoiceAssistantOrbProps> = ({
   };
 
   return (
-    <div className="bg-[#F0F7F0]/90 backdrop-blur-md rounded-[32px] p-5 sm:p-6 shadow-[12px_12px_24px_#d1dbd1,-12px_-12px_24px_#ffffff] border border-white/60 mb-5 relative overflow-hidden transition-all">
+    <div className="bg-[#F0F7F0]/90 backdrop-blur-md rounded-2xl sm:rounded-[32px] p-3.5 sm:p-5 shadow-[8px_8px_16px_#d1dbd1,-8px_-8px_16px_#ffffff] border border-white/60 mb-3 sm:mb-5 relative overflow-hidden transition-all">
       {/* Top Bar with Badge & Voice Waveform */}
-      <div className="flex items-center justify-between gap-3 mb-3">
-        <div className="flex items-center gap-2">
-          <span className="py-1 px-3 bg-[#C8E6C9] rounded-full text-[10px] font-bold uppercase tracking-widest text-[#2E7D32] border border-white/50 shadow-sm">
+      <div className="flex items-center justify-between gap-2 mb-2 sm:mb-3">
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <span className="py-0.5 px-2.5 sm:py-1 sm:px-3 bg-[#C8E6C9] rounded-full text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-[#2E7D32] border border-white/50 shadow-xs">
             {t.voiceAssistant}
           </span>
           {stepHint && (
-            <span className="text-xs text-[#455A45] font-medium hidden sm:inline">
+            <span className="text-[11px] sm:text-xs text-[#455A45] font-medium hidden sm:inline">
               • {stepHint}
             </span>
           )}
         </div>
 
         {/* Voice Waveform Visualization */}
-        <div className="flex items-center gap-1.5 h-6 px-3 py-1 bg-white/50 rounded-full border border-white/70 shadow-inner">
-          <div className={`w-1 bg-[#81C784] rounded-full ${isSpeaking || isListening ? 'h-4 animate-pulse' : 'h-2'}`} />
-          <div className={`w-1 bg-[#4CAF50] rounded-full ${isSpeaking || isListening ? 'h-6' : 'h-3'}`} />
-          <div className={`w-1 bg-[#2E7D32] rounded-full ${isSpeaking || isListening ? 'h-5' : 'h-2'}`} />
-          <div className={`w-1 bg-[#81C784] rounded-full ${isSpeaking || isListening ? 'h-6' : 'h-3'}`} />
-          <div className={`w-1 bg-[#4CAF50] rounded-full ${isSpeaking || isListening ? 'h-3' : 'h-1.5'}`} />
-          <div className={`w-1 bg-[#2E7D32] rounded-full ${isSpeaking || isListening ? 'h-5' : 'h-2'}`} />
+        <div className="flex items-center gap-1 sm:gap-1.5 h-5 sm:h-6 px-2 sm:px-3 py-0.5 sm:py-1 bg-white/50 rounded-full border border-white/70 shadow-inner">
+          <div className={`w-0.5 sm:w-1 bg-[#81C784] rounded-full ${isSpeaking || isListening ? 'h-3 sm:h-4 animate-pulse' : 'h-1.5 sm:h-2'}`} />
+          <div className={`w-0.5 sm:w-1 bg-[#4CAF50] rounded-full ${isSpeaking || isListening ? 'h-5 sm:h-6' : 'h-2 sm:h-3'}`} />
+          <div className={`w-0.5 sm:w-1 bg-[#2E7D32] rounded-full ${isSpeaking || isListening ? 'h-4 sm:h-5' : 'h-1.5 sm:h-2'}`} />
+          <div className={`w-0.5 sm:w-1 bg-[#81C784] rounded-full ${isSpeaking || isListening ? 'h-5 sm:h-6' : 'h-2 sm:h-3'}`} />
+          <div className={`w-0.5 sm:w-1 bg-[#4CAF50] rounded-full ${isSpeaking || isListening ? 'h-2.5 sm:h-3' : 'h-1 sm:h-1.5'}`} />
+          <div className={`w-0.5 sm:w-1 bg-[#2E7D32] rounded-full ${isSpeaking || isListening ? 'h-4 sm:h-5' : 'h-1.5 sm:h-2'}`} />
         </div>
 
         <button
           type="button"
           onClick={() => setMuted(!muted)}
-          className="p-1.5 text-[#455A45] hover:text-[#2D422D] rounded-xl hover:bg-white/60 transition-colors"
+          className="p-1 sm:p-1.5 text-[#455A45] hover:text-[#2D422D] rounded-xl hover:bg-white/60 transition-colors"
           title={muted ? 'Unmute voice' : 'Mute voice'}
         >
-          {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+          {muted ? <VolumeX className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Volume2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
         </button>
       </div>
 
-      <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
-        {/* Large Frosted AI Voice Trigger Orb */}
+      <div className="flex flex-row items-center gap-3 sm:gap-4">
+        {/* Compact AI Voice Trigger Orb */}
         <div className="flex-shrink-0 flex flex-col items-center">
           <button
             type="button"
             onClick={handleToggleListen}
             title={isListening ? 'Stop listening' : t.tapToSpeak}
-            className={`w-20 h-20 sm:w-22 sm:h-22 rounded-full flex items-center justify-center border-4 border-[#F0F7F0] transition-all transform active:scale-95 ${
+            className={`w-14 h-14 sm:w-20 sm:h-20 rounded-full flex items-center justify-center border-2 sm:border-4 border-[#F0F7F0] transition-all transform active:scale-95 ${
               isListening
-                ? 'bg-red-500 shadow-[8px_8px_16px_#fca5a5,-8px_-8px_16px_#ffffff] text-white ring-4 ring-red-200'
+                ? 'bg-red-500 shadow-[6px_6px_12px_#fca5a5,-6px_-6px_12px_#ffffff] text-white ring-3 ring-red-200'
                 : isSpeaking
-                ? 'bg-[#81C784] shadow-[8px_8px_16px_#c8d6c8,-8px_-8px_16px_#ffffff] text-white iso-voice-pulse'
-                : 'bg-[#81C784] hover:bg-[#4CAF50] shadow-[8px_8px_16px_#c8d6c8,-8px_-8px_16px_#ffffff] text-white'
+                ? 'bg-[#81C784] shadow-[6px_6px_12px_#c8d6c8,-6px_-6px_12px_#ffffff] text-white iso-voice-pulse'
+                : 'bg-[#81C784] hover:bg-[#4CAF50] shadow-[6px_6px_12px_#c8d6c8,-6px_-6px_12px_#ffffff] text-white'
             }`}
           >
-            <div className="w-11 h-11 bg-white rounded-full flex items-center justify-center shadow-inner">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-full flex items-center justify-center shadow-inner">
               {isListening ? (
-                <Mic className="w-6 h-6 text-red-600 animate-bounce" />
+                <Mic className="w-4 h-4 sm:w-5 sm:h-5 text-red-600 animate-bounce" />
               ) : isSpeaking ? (
-                <Volume2 className="w-6 h-6 text-[#4CAF50] animate-pulse" />
+                <Volume2 className="w-4 h-4 sm:w-5 sm:h-5 text-[#4CAF50] animate-pulse" />
               ) : (
-                <div className="w-4 h-4 bg-[#81C784] rounded-full" />
+                <div className="w-3 h-3 sm:w-3.5 sm:h-3.5 bg-[#81C784] rounded-full" />
               )}
             </div>
           </button>
-          <span className="text-[10px] font-bold text-[#455A45] uppercase tracking-wider mt-1.5">
+          <span className="text-[9px] sm:text-[10px] font-bold text-[#455A45] uppercase tracking-wider mt-1">
             {isListening ? 'Listening...' : t.tapToSpeak}
           </span>
         </div>
 
         {/* Prompt Dialog & Controls */}
-        <div className="flex-1 min-w-0 text-center sm:text-left">
+        <div className="flex-1 min-w-0 text-left">
           {/* Current Spoken Prompt */}
-          <h3 className="text-[#2D422D] font-bold text-base sm:text-lg leading-snug">
+          <h3 className="text-[#2D422D] font-bold text-xs sm:text-base leading-snug line-clamp-2 sm:line-clamp-none">
             "{currentPrompt}"
           </h3>
 

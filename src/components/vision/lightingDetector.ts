@@ -53,21 +53,25 @@ export function emptyLightingSample(): LightingSample {
  */
 export function analyzeVideoLuminance(
   video: HTMLVideoElement | null,
-  canvas: HTMLCanvasElement
+  canvas?: HTMLCanvasElement | null
 ): LightingSample {
+  if (!video || !video.videoWidth || !video.videoHeight || video.readyState < 2) {
+    return { ...emptyLightingSample(), timestamp: Date.now() };
+  }
   const width = 320;
-  const height = Math.round((width / video.videoWidth) * video.videoHeight || width);
+  const height = Math.max(1, Math.round((width / video.videoWidth) * video.videoHeight || width));
   if (height < 1) {
     return { ...emptyLightingSample(), timestamp: Date.now() };
   }
 
-  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  const targetCanvas = canvas || document.createElement('canvas');
+  const ctx = targetCanvas.getContext('2d', { willReadFrequently: true });
   if (!ctx) {
     return { ...emptyLightingSample(), timestamp: Date.now() };
   }
 
-  canvas.width = width;
-  canvas.height = height;
+  targetCanvas.width = width;
+  targetCanvas.height = height;
   ctx.drawImage(video, 0, 0, width, height);
 
   let imageData: ImageData;

@@ -42,11 +42,38 @@ export default function BackgroundRemover({
       setProcessing(true);
       setError(null);
       try {
-        const cleaned = await removeBackgroundFromDataUrl(
-          sourceDataUrl,
-          {},
-          { onProgress: (p) => setProgress(Math.round(p * 100)) }
-        );
+        let cleaned: string | null = null;
+        const apiKey = (import.meta as any).env?.VITE_REMOVEBG_API_KEY || 'KATuvZFwA3MbH4EH8jh8QeWx';
+        if (apiKey) {
+          try {
+            setProgress(35);
+            const resBlob = await fetch(sourceDataUrl).then((r) => r.blob());
+            const formData = new FormData();
+            formData.append('image_file', resBlob, 'product.jpg');
+            formData.append('size', 'auto');
+            const res = await fetch('https://api.remove.bg/v1.0/removebg', {
+              method: 'POST',
+              headers: { 'X-Api-Key': apiKey },
+              body: formData,
+            });
+            if (res.ok) {
+              const outBlob = await res.blob();
+              cleaned = URL.createObjectURL(outBlob);
+              setProgress(100);
+            }
+          } catch (apiErr) {
+            console.warn('remove.bg call failed, falling back to local canvas:', apiErr);
+          }
+        }
+
+        if (!cleaned) {
+          cleaned = await removeBackgroundFromDataUrl(
+            sourceDataUrl,
+            {},
+            { onProgress: (p) => setProgress(Math.round(p * 100)) }
+          );
+        }
+
         setCleanUrl(cleaned);
         onComplete(cleaned);
       } catch (err) {

@@ -183,8 +183,8 @@ export default function App() {
       {/* GATE 0: Language Selection — runs FIRST on initial app load   */}
       {/* ------------------------------------------------------------- */}
       {!hasSelectedLanguage && (
-        <div className="fixed inset-0 z-50 bg-gradient-to-br from-[#0d281e]/90 via-[#1b4332]/85 to-[#2d6a4f]/80 backdrop-blur-xl flex items-center justify-center p-4">
-          <div className="max-w-2xl w-full">
+        <div className="fixed inset-0 z-50 bg-gradient-to-br from-[#0d281e]/95 via-[#1b4332]/90 to-[#2d6a4f]/85 backdrop-blur-xl overflow-y-auto flex items-start sm:items-center justify-center p-3 sm:p-6">
+          <div className="max-w-2xl w-full my-auto py-2">
             <LanguageSelectorModal
               selectedLanguage={language}
               onSelectLanguage={setLanguage}
@@ -265,27 +265,27 @@ export default function App() {
                 </p>
 
                 {/* Centered CTA buttons: Mic + Camera side by side */}
-                <div className="flex flex-row items-center justify-center gap-4 mt-2">
+                <div className="flex flex-row items-center justify-center gap-3 sm:gap-4 mt-2 w-full max-w-sm">
                   <button
                     type="button"
                     onClick={() => setIsVoiceModalOpen(true)}
-                    className="group flex flex-col items-center gap-2.5 bg-white hover:bg-emerald-50 text-[#1b4332] px-8 py-5 rounded-3xl font-black shadow-[0_12px_32px_rgba(0,0,0,0.25)] transition-all cursor-pointer transform hover:-translate-y-1 active:scale-95"
+                    className="group flex-1 flex flex-col items-center gap-2 bg-white hover:bg-emerald-50 text-[#1b4332] px-3 sm:px-7 py-3 sm:py-4 rounded-2xl sm:rounded-3xl font-black shadow-[0_12px_32px_rgba(0,0,0,0.25)] transition-all cursor-pointer transform hover:-translate-y-0.5 active:scale-95"
                   >
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white group-hover:scale-110 transition-transform shadow-lg">
-                      <Mic className="w-7 h-7 animate-pulse" />
+                    <div className="w-11 h-11 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white group-hover:scale-105 transition-transform shadow-md">
+                      <Mic className="w-5 h-5 sm:w-7 sm:h-7 animate-pulse" />
                     </div>
-                    <span className="text-xs font-extrabold tracking-wide">Voice Listing</span>
+                    <span className="text-[10px] sm:text-xs font-extrabold tracking-wide whitespace-nowrap">Voice Listing</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => setShowCameraStudio(!showCameraStudio)}
-                    className="group flex flex-col items-center gap-2.5 bg-white/15 hover:bg-white/25 text-white px-8 py-5 rounded-3xl font-bold border border-white/30 backdrop-blur-md transition-all cursor-pointer hover:-translate-y-1 active:scale-95"
+                    className="group flex-1 flex flex-col items-center gap-2 bg-white/15 hover:bg-white/25 text-white px-3 sm:px-7 py-3 sm:py-4 rounded-2xl sm:rounded-3xl font-bold border border-white/30 backdrop-blur-md transition-all cursor-pointer hover:-translate-y-0.5 active:scale-95"
                   >
-                    <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <Camera className="w-7 h-7" />
+                    <div className="w-11 h-11 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-white/20 flex items-center justify-center group-hover:scale-105 transition-transform">
+                      <Camera className="w-5 h-5 sm:w-7 sm:h-7" />
                     </div>
-                    <span className="text-xs font-bold tracking-wide">
+                    <span className="text-[10px] sm:text-xs font-bold tracking-wide whitespace-nowrap">
                       {showCameraStudio ? 'Hide Studio' : 'AI Photo Studio'}
                     </span>
                   </button>

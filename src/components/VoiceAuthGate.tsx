@@ -362,9 +362,9 @@ export const VoiceAuthGate: React.FC<VoiceAuthGateProps> = ({
   }, []); // Empty dependency array ensures strict single-mount execution without cyclic re-renders
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gradient-to-br from-[#0d281e]/90 via-[#1b4332]/85 to-[#2d6a4f]/80 backdrop-blur-xl">
+    <div className="fixed inset-0 z-50 overflow-y-auto flex items-start sm:items-center justify-center p-3 sm:p-6 bg-gradient-to-br from-[#0d281e]/95 via-[#1b4332]/90 to-[#2d6a4f]/85 backdrop-blur-xl">
       {/* Voice-Only Onboarding Card */}
-      <div className="w-full max-w-xl bg-white/95 backdrop-blur-2xl rounded-[32px] p-6 sm:p-8 shadow-[0_25px_60px_rgba(0,0,0,0.35)] border border-white/60 flex flex-col items-center text-center animate-fadeIn relative overflow-hidden">
+      <div className="w-full max-w-xl my-auto bg-white/95 backdrop-blur-2xl rounded-2xl sm:rounded-[32px] p-4 sm:p-8 shadow-[0_25px_60px_rgba(0,0,0,0.35)] border border-white/60 flex flex-col items-center text-center animate-fadeIn relative overflow-hidden">
         
         {/* Subtle Decorative Ambient Background Glow */}
         <div className="absolute -top-20 -left-20 w-48 h-48 bg-emerald-300/30 rounded-full blur-3xl pointer-events-none" />
