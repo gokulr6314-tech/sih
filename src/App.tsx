@@ -237,63 +237,59 @@ export default function App() {
         {activeTab === 'catalogue' && (
           <div className="space-y-8">
             {/* Hero Banner */}
-            <div className="bg-gradient-to-r from-[#1b4332] via-[#2d6a4f] to-[#40916c] text-white rounded-[32px] p-7 sm:p-10 lg:p-12 shadow-[14px_14px_30px_#d1dbd1,-14px_-14px_30px_#ffffff] border border-white/30 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl pointer-events-none" />
-              <div className="absolute bottom-0 left-20 w-72 h-72 bg-teal-400/5 rounded-full blur-2xl pointer-events-none" />
+            <div className="bg-gradient-to-br from-[#1b4332] via-[#2d6a4f] to-[#40916c] text-white rounded-[32px] overflow-hidden shadow-[14px_14px_30px_#d1dbd1,-14px_-14px_30px_#ffffff] border border-white/30 relative">
+              {/* Background decor blobs */}
+              <div className="absolute top-0 right-0 w-80 h-80 bg-white/5 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute bottom-0 left-20 w-64 h-64 bg-teal-400/8 rounded-full blur-2xl pointer-events-none" />
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-emerald-300/5 rounded-full blur-3xl pointer-events-none" />
 
-              <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
-                <div>
-                  <div className="flex items-center gap-2.5 mb-2.5">
-                    <span className="px-3.5 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-emerald-300 text-[#1b4332]">
-                      Master Artisan Hub
-                    </span>
-                    <span className="text-xs sm:text-sm text-emerald-100 font-bold">
-                      {artisan.name} {authSession ? `(${authSession.role})` : ''} • {artisan.village}, {artisan.state}
-                    </span>
-                  </div>
-                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight">
-                    Artisan Product Catalogue &amp; Live ONDC Inventory
-                  </h1>
-                  <p className="text-emerald-100/90 text-xs sm:text-sm mt-2 max-w-2xl leading-relaxed font-medium">
-                    Speak naturally in your local language to list new handicrafts. Voice Activity Detection listens, extracts details, suggests fair pricing, and broadcasts across ONDC &amp; global marketplaces.
-                  </p>
-                </div>
+              {/* Top meta strip */}
+              <div className="relative z-10 px-7 sm:px-10 lg:px-12 pt-7 flex items-center gap-3">
+                <span className="px-3.5 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-widest bg-emerald-300/25 text-emerald-100 border border-emerald-300/30">
+                  Master Artisan Hub
+                </span>
+                <span className="text-xs text-emerald-200/80 font-semibold">
+                  {artisan.name} {authSession ? `(${authSession.role})` : ''} · {artisan.village}
+                </span>
+              </div>
 
-                <div className="flex flex-wrap items-center gap-3.5 flex-shrink-0">
+              {/* Centered content */}
+              <div className="relative z-10 flex flex-col items-center text-center px-6 sm:px-10 py-10 sm:py-14 gap-5">
+                {/* 4-word slogan */}
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight max-w-lg">
+                  Sell Your Craft, <span className="text-emerald-300">Globally.</span>
+                </h1>
+
+                <p className="text-[11px] sm:text-xs text-emerald-100/80 max-w-md leading-relaxed font-medium">
+                  Speak in your language — voice AI lists products, prices fairly, and broadcasts to ONDC &amp; global markets.
+                </p>
+
+                {/* Centered CTA buttons: Mic + Camera side by side */}
+                <div className="flex flex-row items-center justify-center gap-4 mt-2">
                   <button
                     type="button"
                     onClick={() => setIsVoiceModalOpen(true)}
-                    className="flex items-center gap-3 bg-white hover:bg-emerald-50 text-[#1b4332] px-6 py-4 rounded-2xl font-black text-sm sm:text-base shadow-[0_8px_24px_rgba(0,0,0,0.2)] transition-all cursor-pointer transform hover:-translate-y-0.5 active:scale-95 group"
+                    className="group flex flex-col items-center gap-2.5 bg-white hover:bg-emerald-50 text-[#1b4332] px-8 py-5 rounded-3xl font-black shadow-[0_12px_32px_rgba(0,0,0,0.25)] transition-all cursor-pointer transform hover:-translate-y-1 active:scale-95"
                   >
-                    <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white group-hover:scale-110 transition-transform">
-                      <Mic className="w-4 h-4 animate-pulse" />
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white group-hover:scale-110 transition-transform shadow-lg">
+                      <Mic className="w-7 h-7 animate-pulse" />
                     </div>
-                    <span>Start Hands-Free Voice Listing</span>
+                    <span className="text-xs font-extrabold tracking-wide">Voice Listing</span>
                   </button>
+
                   <button
                     type="button"
                     onClick={() => setShowCameraStudio(!showCameraStudio)}
-                    className="flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white px-5 py-4 rounded-2xl font-bold text-xs sm:text-sm border border-white/30 backdrop-blur-md transition-all cursor-pointer"
+                    className="group flex flex-col items-center gap-2.5 bg-white/15 hover:bg-white/25 text-white px-8 py-5 rounded-3xl font-bold border border-white/30 backdrop-blur-md transition-all cursor-pointer hover:-translate-y-1 active:scale-95"
                   >
-                    <Camera className="w-4 h-4" />
-                    <span>{showCameraStudio ? 'Hide Camera Studio' : 'AI Photo Studio'}</span>
+                    <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <Camera className="w-7 h-7" />
+                    </div>
+                    <span className="text-xs font-bold tracking-wide">
+                      {showCameraStudio ? 'Hide Studio' : 'AI Photo Studio'}
+                    </span>
                   </button>
                 </div>
-              </div>
-
-              {/* Metrics Strip */}
-              <div className="mt-8 pt-6 border-t border-white/20 grid grid-cols-2 sm:grid-cols-4 gap-6">
-                {[
-                  { label: 'Active Listings', value: `${products.length} Products`, color: 'text-white' },
-                  { label: 'GI Tag Certified', value: 'Verified Authentic', color: 'text-emerald-300' },
-                  { label: 'Direct Artisan Margin', value: '82% Net Profit', color: 'text-amber-300' },
-                  { label: 'ONDC Node Status', value: '● Live Active', color: 'text-white' },
-                ].map(m => (
-                  <div key={m.label}>
-                    <p className="text-emerald-200/80 text-[11px] uppercase tracking-wider font-semibold">{m.label}</p>
-                    <p className={`text-lg sm:text-xl font-black mt-0.5 ${m.color}`}>{m.value}</p>
-                  </div>
-                ))}
               </div>
             </div>
 

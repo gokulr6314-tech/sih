@@ -1,17 +1,12 @@
 import React from 'react';
 import {
-  Sparkles,
-  Mic,
   Volume2,
   VolumeX,
   Globe,
   Store,
   Package,
-  ShoppingBag,
   Globe2,
   BarChart3,
-  Radio,
-  ExternalLink,
 } from 'lucide-react';
 import { SupportedLanguageCode } from '../types';
 import { SUPPORTED_LANGUAGES } from '../lib/languages';
@@ -50,77 +45,41 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <header className="sticky top-0 z-40 bg-[#F0F7F0]/85 backdrop-blur-xl border-b border-white/60 shadow-[0_4px_30px_rgba(45,66,45,0.04)] transition-all">
       <div className="max-w-[1440px] mx-auto px-5 sm:px-8 lg:px-12">
-        <div className="flex items-center justify-between h-20 gap-3 sm:gap-6">
-          {/* 1. Sleek Marketplace Brand Logo: KarigarSetu */}
-          <div className="flex items-center gap-3.5">
-            <button
-              type="button"
-              onClick={() => onSelectTab('catalogue')}
-              className="flex items-center gap-3 text-left group focus:outline-hidden cursor-pointer"
-            >
-              {/* Minimalist Artisan Geometric Storefront & Craft Motif SVG Icon */}
-              <div className="relative w-11 h-11 rounded-2xl bg-gradient-to-br from-[#1b4332] via-[#2d6a4f] to-[#40916c] flex items-center justify-center p-2.5 shadow-[0_6px_16px_rgba(45,106,79,0.25)] border border-white/40 group-hover:scale-105 transition-transform duration-200">
-                <svg
-                  viewBox="0 0 32 32"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-full h-full text-white"
-                >
-                  {/* Geometric Marketplace Gable / Arch */}
-                  <path
-                    d="M16 3L4 10V13H28V10L16 3Z"
-                    fill="currentColor"
-                    fillOpacity="0.9"
-                  />
-                  {/* Intricate Handcrafted Weave Pillars */}
-                  <path
-                    d="M7 15H11V26H7V15Z"
-                    fill="#D8F3DC"
-                    fillOpacity="0.95"
-                  />
-                  <path
-                    d="M14 15H18V26H14V15Z"
-                    fill="#B7E4C7"
-                    fillOpacity="0.95"
-                  />
-                  <path
-                    d="M21 15H25V26H21V15Z"
-                    fill="#D8F3DC"
-                    fillOpacity="0.95"
-                  />
-                  {/* Center Traditional Rhombus Weave Eye */}
-                  <polygon
-                    points="16,17 19,20.5 16,24 13,20.5"
-                    fill="#52B788"
-                    stroke="#ffffff"
-                    strokeWidth="1.2"
-                  />
-                  {/* Plinth Base */}
-                  <path
-                    d="M4 27H28V29H4V27Z"
-                    fill="currentColor"
-                  />
-                </svg>
-                {/* Subtle Amber Glow Dot representing Craft Heritage */}
-                <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-amber-400 rounded-full border-2 border-white shadow-xs" />
-              </div>
+        <div className="flex items-center justify-between h-20 gap-4 sm:gap-8">
+          {/* 1. Logo + Brand — pinned to the far left */}
+          <button
+            type="button"
+            onClick={() => onSelectTab('catalogue')}
+            className="flex items-center gap-4 text-left group focus:outline-hidden cursor-pointer flex-shrink-0"
+          >
+            {/* Artisan Geometric Storefront SVG Icon */}
+            <div className="relative w-11 h-11 rounded-2xl bg-gradient-to-br from-[#1b4332] via-[#2d6a4f] to-[#40916c] flex items-center justify-center p-2.5 shadow-[0_6px_16px_rgba(45,106,79,0.25)] border border-white/40 group-hover:scale-105 transition-transform duration-200">
+              <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full text-white">
+                <path d="M16 3L4 10V13H28V10L16 3Z" fill="currentColor" fillOpacity="0.9" />
+                <path d="M7 15H11V26H7V15Z" fill="#D8F3DC" fillOpacity="0.95" />
+                <path d="M14 15H18V26H14V15Z" fill="#B7E4C7" fillOpacity="0.95" />
+                <path d="M21 15H25V26H21V15Z" fill="#D8F3DC" fillOpacity="0.95" />
+                <polygon points="16,17 19,20.5 16,24 13,20.5" fill="#52B788" stroke="#ffffff" strokeWidth="1.2" />
+                <path d="M4 27H28V29H4V27Z" fill="currentColor" />
+              </svg>
+              <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-amber-400 rounded-full border-2 border-white shadow-xs" />
+            </div>
 
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xl font-extrabold tracking-tight text-[#1b4332] font-sans">
-                    Karigar<span className="text-[#2d6a4f] font-black">Setu</span>
-                  </span>
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-[#d8f3dc] text-[#1b4332] border border-[#b7e4c7] shadow-2xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f] animate-ping" />
-                    ONDC & Global Sync
-                  </span>
-                </div>
-                <p className="text-[11px] text-[#40916c] font-semibold tracking-wide hidden sm:block">
-                  Voice-First Artisan Commerce & Direct Market Linkage
-                </p>
+            <div className="space-y-0.5">
+              <div className="flex items-center gap-3">
+                <span className="text-xl font-extrabold tracking-tight text-[#1b4332] font-sans letter-spacing-tight">
+                  Karigar<span className="text-[#2d6a4f] font-black">Setu</span>
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest bg-[#d8f3dc] text-[#1b4332] border border-[#b7e4c7] shadow-2xs">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f] animate-ping" />
+                  ONDC Live
+                </span>
               </div>
-            </button>
-          </div>
+              <p className="text-[11px] text-[#40916c] font-semibold tracking-widest uppercase hidden sm:block">
+                Voice‑First  ·  Artisan  ·  Commerce
+              </p>
+            </div>
+          </button>
 
           {/* 2. Navigation Links: Catalogue, Orders, Market Linkage, Shop Analytics */}
           <nav className="hidden md:flex items-center gap-1.5 bg-[#E1EBE1]/70 p-1.5 rounded-2xl border border-white/60 shadow-[inset_2px_2px_5px_#d1dbd1,inset_-2px_-2px_5px_#ffffff]">
@@ -192,44 +151,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           </nav>
 
-          {/* 3. Action Controls: Voice Mode Ready Status Pill, Language Pill, Audio Toggle */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            {/* Quick-Access Status Pill: "Voice Mode Ready" */}
-            <button
-              type="button"
-              onClick={onLaunchVoiceAssistant}
-              className={`group relative flex items-center gap-2.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-2xl font-bold text-xs sm:text-sm transition-all duration-300 shadow-[4px_4px_12px_#c8d6c8,-4px_-4px_12px_#ffffff] cursor-pointer active:scale-95 border ${
-                isVoiceActive
-                  ? 'bg-gradient-to-r from-red-600 via-rose-600 to-pink-600 text-white border-rose-300 ring-2 ring-rose-300 animate-pulse'
-                  : 'bg-gradient-to-r from-[#1b4332] via-[#2d6a4f] to-[#40916c] hover:from-[#143628] hover:to-[#2d6a4f] text-white border-emerald-400/40'
-              }`}
-              title="Click to launch hands-free Gemini Live voice assistant"
-            >
-              {/* Pulsating ambient dot */}
-              <span className="relative flex h-2.5 w-2.5">
-                <span
-                  className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
-                    isVoiceActive ? 'bg-white' : 'bg-emerald-300'
-                  }`}
-                />
-                <span
-                  className={`relative inline-flex rounded-full h-2.5 w-2.5 ${
-                    isVoiceActive ? 'bg-white' : 'bg-emerald-400'
-                  }`}
-                />
-              </span>
-
-              <Mic className="w-4 h-4 text-emerald-100 group-hover:scale-110 transition-transform" />
-
-              <span className="tracking-tight">
-                {isVoiceActive ? 'Voice Assistant Active' : 'Voice Mode Ready'}
-              </span>
-
-              <span className="hidden lg:inline-flex px-1.5 py-0.5 rounded-md bg-white/20 text-[10px] font-extrabold uppercase tracking-wider backdrop-blur-xs">
-                Live
-              </span>
-            </button>
-
+          {/* 3. Action Controls: Language Pill, Audio Toggle */}
+          <div className="flex items-center gap-3 sm:gap-4">
             {/* Language Switcher */}
             <button
               type="button"

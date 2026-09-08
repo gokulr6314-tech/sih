@@ -121,6 +121,59 @@ export const ProductImageCapture: React.FC<ProductImageCaptureProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
   const [activeTab, setActiveTab] = useState<'studio' | 'raw'>('studio');
+  const [bgRemoving, setBgRemoving] = useState(false);
+  const [bgRemovedUrl, setBgRemovedUrl] = useState<string | null>(null);
+  const [bgError, setBgError] = useState<string | null>(null);
+
+  /**
+   * Call remove.bg API to strip the product background.
+   * Uses the VITE_REMOVEBG_API_KEY env variable.
+   */
+  const removeBackground = async () => {
+    const photoUrl = rawImageUrl;
+    if (!photoUrl) return;
+    setBgRemoving(true);
+    setBgError(null);
+    try {
+      // Fetch the image as a blob (handles both data: URLs and http URLs)
+      let imageBlob: Blob;
+      if (photoUrl.startsWith('data:')) {
+        const response = await fetch(photoUrl);
+        imageBlob = await response.blob();
+      } else {
+        // For remote URLs, fetch through a proxy-safe approach
+        const response = await fetch(photoUrl);
+        imageBlob = await response.blob();
+      }
+
+      const formData = new FormData();
+      formData.append('image_file', imageBlob, 'product.jpg');
+      formData.append('size', 'auto');
+
+      const apiKey = (import.meta as any).env?.VITE_REMOVEBG_API_KEY || 'KATuvZFwA3MbH4EH8jh8QeWx';
+      const res = await fetch('https://api.remove.bg/v1.0/removebg', {
+        method: 'POST',
+        headers: { 'X-Api-Key': apiKey },
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(errText || `remove.bg API error: ${res.status}`);
+      }
+
+      const blob = await res.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      setBgRemovedUrl(objectUrl);
+      // Pass back to parent as the enhanced image
+      onImageSelected(objectUrl);
+    } catch (err: any) {
+      console.error('remove.bg error:', err);
+      setBgError('Background removal failed. Check API key or network.');
+    } finally {
+      setBgRemoving(false);
+    }
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -420,26 +473,52 @@ export const ProductImageCapture: React.FC<ProductImageCaptureProps> = ({
               </div>
 
               {/* Action Buttons */}
-              <div className="mt-4 pt-3 border-t border-white/80 flex items-center justify-between gap-2">
+              <div className="mt-4 pt-3 border-t border-white/80 flex flex-col gap-2">
+                {/* Remove BG Button */}
                 <button
                   type="button"
-                  onClick={onRetake}
-                  className="px-3 py-2 rounded-xl bg-white text-[#455A45] hover:text-[#2D422D] text-xs font-bold border border-white/90 shadow-xs flex items-center gap-1 cursor-pointer transition-all active:scale-95"
+                  onClick={removeBackground}
+                  disabled={bgRemoving}
+                  className="w-full px-4 py-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 disabled:opacity-60 text-white text-xs font-black flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95 shadow-[0_4px_14px_rgba(124,58,237,0.4)]"
                 >
-                  <RefreshCw className="w-3 h-3" />
-                  <span>{prompts.retakeText}</span>
+                  {bgRemoving ? (
+                    <>
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                      <span>Removing Background…</span>
+                    </>
+                  ) : (
+                    <>
+                      <Wand2 className="w-3.5 h-3.5" />
+                      <span>{bgRemovedUrl ? '✓ BG Removed — Re-apply' : '✨ Remove BG (remove.bg AI)'}</span>
+                    </>
+                  )}
                 </button>
 
-                {onProceedToDescription && (
+                {bgError && (
+                  <p className="text-[10px] text-red-600 font-semibold text-center">{bgError}</p>
+                )}
+
+                <div className="flex items-center justify-between gap-2">
                   <button
                     type="button"
-                    onClick={onProceedToDescription}
-                    className="px-4 py-2 rounded-xl bg-[#81C784] hover:bg-[#4CAF50] text-white text-xs font-black shadow-[3px_3px_8px_#c8d6c8,-3px_-3px_8px_#ffffff] border border-white/50 flex items-center gap-1.5 cursor-pointer transition-all active:scale-95"
+                    onClick={onRetake}
+                    className="px-3 py-2 rounded-xl bg-white text-[#455A45] hover:text-[#2D422D] text-xs font-bold border border-white/90 shadow-xs flex items-center gap-1 cursor-pointer transition-all active:scale-95"
                   >
-                    <span>{prompts.continueText}</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <RefreshCw className="w-3 h-3" />
+                    <span>{prompts.retakeText}</span>
                   </button>
-                )}
+
+                  {onProceedToDescription && (
+                    <button
+                      type="button"
+                      onClick={onProceedToDescription}
+                      className="flex-1 px-4 py-2 rounded-xl bg-[#81C784] hover:bg-[#4CAF50] text-white text-xs font-black shadow-[3px_3px_8px_#c8d6c8,-3px_-3px_8px_#ffffff] border border-white/50 flex items-center justify-center gap-1.5 cursor-pointer transition-all active:scale-95"
+                    >
+                      <span>{prompts.continueText}</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           </div>

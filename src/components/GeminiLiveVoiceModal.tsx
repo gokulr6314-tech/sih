@@ -455,115 +455,127 @@ export const GeminiLiveVoiceModal: React.FC<GeminiLiveVoiceModalProps> = ({
     }
   }, [clearAllTimers]);
 
-  // Activate continuous Voice Activity Detection (VAD) listening
-  const activateHandsFreeListening = useCallback(() => {
+  const activateHandsFreeListening = useCallback((delayMs: number = 0) => {
     if (isDestroyedRef.current || typeof window === 'undefined') return;
 
-    assistantStateRef.current = 'listening';
-    setAssistantState('listening');
-    setLiveTranscript('');
-    hasSpokenThisTurnRef.current = false;
-    clearAllTimers();
-
-    // 6-Second gentle reminder timeout
-    noSpeechTimeoutRef.current = setTimeout(() => {
+    const startNow = () => {
       if (isDestroyedRef.current) return;
-      if (!hasSpokenThisTurnRef.current && assistantStateRef.current === 'listening') {
-        const lang = languageRef.current;
-        const reminder =
-          lang === 'hi'
-            ? 'कारीगर जी, मैं सुन रही हूँ। कृपया अपने उत्पाद के बारे में बताएं।'
-            : "I'm listening whenever you are ready. Tell me about your product.";
 
-        SpeechService.stopSpeaking();
-        SpeechService.speak(
-          reminder,
-          lang,
-          () => {
-            if (!isDestroyedRef.current) {
-              assistantStateRef.current = 'speaking';
-              setAssistantState('speaking');
-            }
-          },
-          () => {
-            if (!isDestroyedRef.current) {
-              activateHandsFreeListeningRef.current();
-            }
-          }
-        );
-      }
-    }, 6000);
+      // CRITICAL ECHO FIX: Make absolutely sure TTS has stopped before opening mic
+      SpeechService.stopSpeaking();
 
-    const SpeechRec = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SpeechRec) return;
+      assistantStateRef.current = 'listening';
+      setAssistantState('listening');
+      setLiveTranscript('');
+      hasSpokenThisTurnRef.current = false;
+      clearAllTimers();
 
-    try {
-      if (recognitionRef.current) {
-        try {
-          recognitionRef.current.abort();
-        } catch {
-          // ignore
-        }
-      }
-
-      const recognition = new SpeechRec();
-      recognitionRef.current = recognition;
-      recognition.continuous = true;
-      recognition.interimResults = true;
-
-      const langConfig = SUPPORTED_LANGUAGES.find((l) => l.code === languageRef.current);
-      recognition.lang = langConfig ? langConfig.speechLocale : 'en-IN';
-
-      recognition.onresult = (event: any) => {
+      // 6-Second gentle reminder timeout
+      noSpeechTimeoutRef.current = setTimeout(() => {
         if (isDestroyedRef.current) return;
-        let interim = '';
-        let final = '';
+        if (!hasSpokenThisTurnRef.current && assistantStateRef.current === 'listening') {
+          const lang = languageRef.current;
+          const reminder =
+            lang === 'hi'
+              ? 'कारीगर जी, मैं सुन रही हूँ। कृपया अपने उत्पाद के बारे में बताएं।'
+              : "I'm listening whenever you are ready. Tell me about your product.";
 
-        for (let i = event.resultIndex; i < event.results.length; ++i) {
-          if (event.results[i].isFinal) {
-            final += event.results[i][0].transcript;
-          } else {
-            interim += event.results[i][0].transcript;
-          }
-        }
-
-        const activeText = (final || interim).trim();
-        if (activeText) {
-          setLiveTranscript(activeText);
-          hasSpokenThisTurnRef.current = true;
-
-          // Clear 6-second timeout since user is speaking
-          if (noSpeechTimeoutRef.current) {
-            clearTimeout(noSpeechTimeoutRef.current);
-            noSpeechTimeoutRef.current = null;
-          }
-
-          // Reset 1.5s silence VAD timer
-          if (silenceTimerRef.current) {
-            clearTimeout(silenceTimerRef.current);
-          }
-
-          silenceTimerRef.current = setTimeout(() => {
-            if (isDestroyedRef.current) return;
-            try {
-              recognition.stop();
-            } catch {
-              // ignore
+          SpeechService.stopSpeaking();
+          SpeechService.speak(
+            reminder,
+            lang,
+            () => {
+              if (!isDestroyedRef.current) {
+                assistantStateRef.current = 'speaking';
+                setAssistantState('speaking');
+              }
+            },
+            () => {
+              if (!isDestroyedRef.current) {
+                activateHandsFreeListeningRef.current(350);
+              }
             }
-            processTurnAnswer(activeText);
-          }, 1500);
+          );
         }
-      };
+      }, 6000);
 
-      recognition.onerror = (err: any) => {
-        if (err.error !== 'no-speech') {
-          console.warn('Recognition warning:', err.error);
+      const SpeechRec = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (!SpeechRec) return;
+
+      try {
+        if (recognitionRef.current) {
+          try {
+            recognitionRef.current.abort();
+          } catch {
+            // ignore
+          }
         }
-      };
 
-      recognition.start();
-    } catch (e) {
-      console.warn('Recognition start exception:', e);
+        const recognition = new SpeechRec();
+        recognitionRef.current = recognition;
+        recognition.continuous = true;
+        recognition.interimResults = true;
+
+        const langConfig = SUPPORTED_LANGUAGES.find((l) => l.code === languageRef.current);
+        recognition.lang = langConfig ? langConfig.speechLocale : 'en-IN';
+
+        recognition.onresult = (event: any) => {
+          if (isDestroyedRef.current) return;
+          let interim = '';
+          let final = '';
+
+          for (let i = event.resultIndex; i < event.results.length; ++i) {
+            if (event.results[i].isFinal) {
+              final += event.results[i][0].transcript;
+            } else {
+              interim += event.results[i][0].transcript;
+            }
+          }
+
+          const activeText = (final || interim).trim();
+          if (activeText) {
+            setLiveTranscript(activeText);
+            hasSpokenThisTurnRef.current = true;
+
+            // Clear 6-second timeout since user is speaking
+            if (noSpeechTimeoutRef.current) {
+              clearTimeout(noSpeechTimeoutRef.current);
+              noSpeechTimeoutRef.current = null;
+            }
+
+            // Reset 1.5s silence VAD timer
+            if (silenceTimerRef.current) {
+              clearTimeout(silenceTimerRef.current);
+            }
+
+            silenceTimerRef.current = setTimeout(() => {
+              if (isDestroyedRef.current) return;
+              try {
+                recognition.stop();
+              } catch {
+                // ignore
+              }
+              processTurnAnswer(activeText);
+            }, 1500);
+          }
+        };
+
+        recognition.onerror = (err: any) => {
+          if (err.error !== 'no-speech') {
+            console.warn('Recognition warning:', err.error);
+          }
+        };
+
+        recognition.start();
+      } catch (e) {
+        console.warn('Recognition start exception:', e);
+      }
+    };
+
+    if (delayMs > 0) {
+      setTimeout(startNow, delayMs);
+    } else {
+      startNow();
     }
   }, [clearAllTimers, processTurnAnswer]);
 
@@ -573,6 +585,11 @@ export const GeminiLiveVoiceModal: React.FC<GeminiLiveVoiceModalProps> = ({
   const executeTurn = useCallback((step: TurnStep, draft: DraftCatalogueData) => {
     if (isDestroyedRef.current) return;
     clearAllTimers();
+
+    // CHROME DESKTOP TTS FIX: Resume synthesis before every speak() call
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.resume();
+    }
 
     const lang = languageRef.current;
     const cfg = STEP_CONFIGS[step];
@@ -682,12 +699,15 @@ export const GeminiLiveVoiceModal: React.FC<GeminiLiveVoiceModalProps> = ({
         },
         () => {
           if (!isDestroyedRef.current) {
-            activateHandsFreeListeningRef.current();
+            // ECHO BUG FIX: 400ms delay after TTS ends before opening mic
+            // This ensures the speakers have gone silent and the microphone
+            // won't pick up the tail of the assistant's own voice.
+            activateHandsFreeListeningRef.current(400);
           }
         }
       );
     } else {
-      activateHandsFreeListeningRef.current();
+      activateHandsFreeListeningRef.current(0);
     }
   }, [clearAllTimers, onProductCreated, handleCancelAndClose]);
 
